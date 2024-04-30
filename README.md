@@ -82,7 +82,6 @@ to `<output filename>.alignment`.
 * `Ctrl + Shift + left arrow` - Big shift left
 * `Ctrl + Shift + right arrow` - Big shift right
 
-
 * `o` - Generalized offset color scheme
 * `i` - Normalized generalized offset color scheme
 * `u` - Multiplicity type color scheme
@@ -90,14 +89,9 @@ to `<output filename>.alignment`.
 * `p` - Multiplicity color scheme
 * `l` - LCB color scheme
 
-
 * `Shift + L` - Toggle LCB homology tracking lines
-
-
-* `Shift + S` - Lock scales to the longest range of sequence currently in view.
-
-
-* `Ctrl + P` - print
+* `Shift + S` - Lock scales to the longest range of sequence currently in view
+* `Ctrl + P` - Print
 
 
 ## Mouse interface
