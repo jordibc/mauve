@@ -14,7 +14,7 @@ import org.gel.mauve.color.LCBColorScheme;
 
 /**
  * @author Paul Infield-Harm
- * 
+ *
  * Data model for viewer.
  */
 public class LcbViewerModel extends BaseViewerModel {
@@ -23,7 +23,7 @@ public class LcbViewerModel extends BaseViewerModel {
 
 	// The sequence coordinates of the complete set of LCB boundaries
 	private LCB [] fullLcbList = new LCB [0];
-	
+
 	// The sequence coordinate of contig-split LCB boundaries
 	private LCB [] splitLcbList = new LCB[0];
 
@@ -43,7 +43,7 @@ public class LcbViewerModel extends BaseViewerModel {
 	private boolean drawLCBbounds = true;
 
 	private boolean fillLCBboxes = false;
-	
+
 	private boolean displaySplitLCBs = false;
 
 	private long highlightCoordinateRight = -1;
@@ -159,7 +159,7 @@ public class LcbViewerModel extends BaseViewerModel {
 	public LCB [] getFullLcbList () {
 		return fullLcbList;
 	}
-	
+
 	/**
 	 * @param delLcbList
 	 *            list of deleted LCBs that should not be shown.
@@ -418,7 +418,7 @@ public class LcbViewerModel extends BaseViewerModel {
 	/**
 	 * Finds all LCBs that intersect the specified coordinate range in the
 	 * current view
-	 * 
+	 *
 	 * @param start_coord
 	 *            The first coordinate of the intersection range
 	 * @param end_coord
@@ -497,7 +497,7 @@ public class LcbViewerModel extends BaseViewerModel {
 
 	public void addMatch (Match m) {
 		super.addMatch (m);
-		originalMatchLcbs.add (new Integer (m.lcb));
+		originalMatchLcbs.add (Integer.valueOf (m.lcb));
 	}
 
 	public void setDrawLcbBounds (boolean value) {
@@ -532,19 +532,19 @@ public class LcbViewerModel extends BaseViewerModel {
 		updateLCBweight((int) minimumLCBWeight, true);
 		fireDrawingSettingsEvent();
 	}
-	
+
 	public boolean getSplitLcbByCtg () {
 		return displaySplitLCBs;
 	}
-	
+
 	public void setSplitLcbList(LCB[] list){
 		splitLcbList = list;
 	}
-	
+
 	public LCB[] getSplitLcbList(){
 		return splitLcbList;
 	}
-	
+
 	public void initModelLCBs () {
 		nway_lcb_list = LCBlist.isNwayLcbList (getFullLcbList (), this);
 		LCBlist.computeLCBAdjacencies (getFullLcbList (), this);
@@ -574,8 +574,8 @@ public class LcbViewerModel extends BaseViewerModel {
 				LCBlist.filterLCBs (tmp_lcb_list, this, null, false);
 			} catch (Error e) {
 				lcb_minimum_weight = 0;
-				lcb_change_points.addElement (new Integer (0));
-				lcb_change_points.addElement (new Integer (0));
+				lcb_change_points.addElement (Integer.valueOf (0));
+				lcb_change_points.addElement (Integer.valueOf (0));
 			}
 			setLcbChangePoints (lcb_change_points);
 		}
@@ -631,14 +631,14 @@ s
 		}
 		System.err.print(lcb_input);
 		if (this instanceof XmfaViewerModel){
-			lcb_input = PermutationExporter.getPermStrings((XmfaViewerModel) this,  genomes);			
+			lcb_input = PermutationExporter.getPermStrings((XmfaViewerModel) this,  genomes);
 		}
 		System.err.print(lcb_input);
 		org.gel.mauve.dcj.DCJWindow.startDCJ (lcb_input);
 	}
 */
-	
-	
+
+
 	public void launchGrimmMGR () {
 		String grimm_url = "http://nbcr.sdsc.edu/GRIMM/grimm.cgi?";
 		String url_data = "ismult=1&ngenomewins=" + getSequenceCount ();

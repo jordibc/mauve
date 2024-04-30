@@ -16,17 +16,17 @@ public class AlignWorker extends SwingWorker
     int retcode = -1;
     private Process align_proc = null;
     private boolean killed = false;
-    
+
     private PrintStream out;
     private PrintStream err;
-    
+
     public AlignWorker (AlignmentProcessListener align_listener, String[] mauve_cmd)
     {
     	this(align_listener,mauve_cmd,true);
     }
-    
+
     /**
-     * 
+     *
      * @param align_listener
      * @param mauve_cmd
      * @param verbose true if redirect progressiveMauve output, false if suppress
@@ -42,7 +42,7 @@ public class AlignWorker extends SwingWorker
         	this.err = null;
         }
     }
-   
+
     public Object construct()
     {
         try
@@ -53,10 +53,10 @@ public class AlignWorker extends SwingWorker
         //    OutStreamPrinter errP = new OutStreamPrinter(align_proc.getErrorStream(), MyConsole.err());
             OutStreamPrinter outP = new OutStreamPrinter(align_proc.getInputStream(), out);
             OutStreamPrinter errP = new OutStreamPrinter(align_proc.getErrorStream(), err);
-            
+
             errP.start();
             outP.start();
-            
+
             try
             {
                 retcode = align_proc.waitFor();
@@ -87,9 +87,9 @@ public class AlignWorker extends SwingWorker
 	            e.printStackTrace(MyConsole.err());
         	}
         }
-        return new Integer(retcode);
+        return Integer.valueOf(retcode);
     }
-    
+
     public void finished()
     {
         align_listener.completeAlignment(retcode);
@@ -111,13 +111,13 @@ class OutStreamPrinter extends Thread
 {
     InputStream in;
     PrintStream ps;
-   
+
     OutStreamPrinter(InputStream in, PrintStream ps)
     {
         this.in = in;
         this.ps = ps;
     }
-    
+
     public void run()
     {
         try
@@ -130,10 +130,10 @@ class OutStreamPrinter extends Thread
             	if(ps!=null)
             		ps.println(line);
             }
-        } 
+        }
     	catch (IOException ioe)
-    	{	
-    	    ioe.printStackTrace(MyConsole.err());  
+    	{
+    	    ioe.printStackTrace(MyConsole.err());
     	}
     }
 }

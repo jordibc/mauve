@@ -18,24 +18,24 @@ import org.biojavax.bio.seq.RichSequenceIterator;
  * Acts as a cache to allow for faster access to files with multiple contigs without
  * creating a permanent memory commitment.  Necessary due to biojava's interaction with
  * the BaseFormat class.
- * 
+ *
  * @author Anna I Rissman
  *
  */
 public class SequenceIteratorCache {
-	
+
 	/**
 	 * contains file names mapped to arrays of data required for cache
 	 */
 	protected static Hashtable cache = new Hashtable ();
-	
+
 	/**
 	 * Integers that represent array indexes of different required information.
 	 * Useful for accessing info in the arrays returned from the cache.
 	 */
 	public final static int ITERATOR_INDEX = 0;
 	public final static int INDEX_INDEX = 1;
-	
+
 	/**
 	 * Represents how much time will pass between attempts to clean up cache
 	 */
@@ -45,7 +45,7 @@ public class SequenceIteratorCache {
 	 *  left to iterate through
 	 */
 	public final static Timer CLEAN_UP_TIMER = new Timer (CLEAN_DELAY, null);
-	
+
 	/**
 	 * Initializes the clean up timer by adding a listener and starting the timer
 	 */
@@ -57,10 +57,10 @@ public class SequenceIteratorCache {
 		});
 		CLEAN_UP_TIMER.start();
 	}
-	
+
 	/**
 	 * Returns an iterator already iterated to the appropriate index.
-	 * 
+	 *
 	 * @param format	The format the file to parse is in
 	 * @param source	The file containing the information from which to
 	 * 					 construct the iterator
@@ -78,13 +78,13 @@ public class SequenceIteratorCache {
 		if (array == null) {
 			array = new Object [2];
 			array [ITERATOR_INDEX] = format.readFile(source);
-			array [INDEX_INDEX] = new Integer (0);
+			array [INDEX_INDEX] = Integer.valueOf (0);
 			cache.put (source, array);
 		}
 		try {
 			for (int i = ((Integer) array [INDEX_INDEX]).intValue (); i < index; i++)
 				((SequenceIterator) array [ITERATOR_INDEX]).nextSequence ();
-			array [INDEX_INDEX] = new Integer (index + 1);
+			array [INDEX_INDEX] = Integer.valueOf (index + 1);
 			if(array [ITERATOR_INDEX] instanceof RichSequenceIterator)
 				return ((RichSequenceIterator) array [ITERATOR_INDEX]).nextRichSequence();
 			return ((SequenceIterator) array [ITERATOR_INDEX]).nextSequence();
@@ -94,7 +94,7 @@ public class SequenceIteratorCache {
             throw new Error("Unexpected exception.", e);
 		}
 	}
-	
+
 	/**
 	 * Looks through cache hashtable for any iterators that have no more sequences
 	 * and therefore are no longer useful and removes them from the cache.
@@ -112,5 +112,5 @@ public class SequenceIteratorCache {
 			}
 		}
 	}
-	
+
 }

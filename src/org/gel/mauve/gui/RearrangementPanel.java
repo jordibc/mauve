@@ -96,8 +96,8 @@ import org.gel.mauve.recombination.WeakArgModelBuilder;
  */
 public class RearrangementPanel extends JLayeredPane implements ActionListener, ChangeListener, Scrollable, Printable, ModelListener
 {
-    private final static Integer LCB_PANEL = new Integer(2);
-    private final static Integer SEQ_PANEL = new Integer(1);
+    private final static Integer LCB_PANEL = Integer.valueOf(2);
+    private final static Integer SEQ_PANEL = Integer.valueOf(1);
 
     // The frame containing this RearrangementPanel
     public MauveFrame mauveFrame;
@@ -137,7 +137,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     // Used for printing.
     private double printingScale = -1;
     private int printingResolution = 600;
-    
+
     // Data model.
     BaseViewerModel model;
 
@@ -145,13 +145,13 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     private boolean oldDrawMatches;
     private boolean oldFillBoxes;
     private JToggleButton zoom_button;
-    
+
     // A weird hack to change cursor for zooming.
     private CtrlKeyDetector ctrlDetector = new CtrlKeyDetector();
-    
+
     /** a list of objects listening for hint messages */
     private EventListenerList hintMessageListeners = new EventListenerList();
-    
+
     /** variables controlling the display layout */
     private GridBagLayout gbl = new GridBagLayout();
     private GridBagConstraints gbc = new GridBagConstraints();
@@ -160,7 +160,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     /**
      * Does basic initialization for a RearrangementPanel. Call
      * readRearrangementData() to load and display data.
-     * 
+     *
      * @param toolbar
      *            A toolbar which can be manipulated by this panel, or null to indicate no
      *            toolbar will be available
@@ -270,9 +270,9 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         initKeyBindings();
         initToolbar();
     }
-    
+
     /**
-     *  
+     *
      */
     private void initKeyBindings()
     {
@@ -286,7 +286,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         addKeyMapping(cmd_key + " shift RIGHT", "ShiftRight", this);
         addKeyMapping(cmd_key + " R", "Recombination", this);
     }
-    
+
     public void addKeyMapping(String stroke, String actionName, ActionListener listener)
     {
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(stroke), actionName);
@@ -298,7 +298,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     {
         getInputMap(WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke(stroke));
     }
-        
+
 
     private boolean haveNwayLcbData()
     {
@@ -313,7 +313,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         }
         return false;
     }
-    
+
     private boolean haveBackboneData()
     {
         if (model instanceof XmfaViewerModel)
@@ -325,7 +325,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         return false;
     }
     /**
-     *  
+     *
      */
     private void initToolbar()
     {
@@ -371,7 +371,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         zoomout_button.setActionCommand("ZoomOut");
         zoomout_button.addActionListener(this);
         toolbar.add(zoomout_button);
-        
+
         zoom_button = new JToggleButton(MauveFrame.zoom_button_icon);
         zoom_button.setToolTipText("Zoom");
         zoom_button.setActionCommand("Zoom");
@@ -394,7 +394,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 	    dcj_button.setActionCommand("DCJ");
 	    dcj_button.addActionListener(this);
 	    toolbar.add(dcj_button);
-        
+
         // When clicked, the zoom out button zooms the display 50% (doubles the
         // displayed area)
 
@@ -406,7 +406,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 	        grimm_button.addActionListener(this);
 	        toolbar.add(grimm_button);
         }
-	    
+
 	    if (model.getGenomes().size() == 2){
 	    	JButton scAss_button = new JButton(MauveFrame.scAss_icon);
 	    	scAss_button.setToolTipText("Score an assembly by DCJ, SNP, and Gap analysis");
@@ -414,7 +414,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 	    	scAss_button.addActionListener(this);
 	    	toolbar.add(scAss_button);
 	    }
-        
+
         // Fill out the toolbar
         Dimension minSize = new Dimension(5, 3);
         Dimension prefSize = new Dimension(5, 3);
@@ -448,7 +448,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         if(haveNwayLcbData() && toolbar != null && lm.getLcbCount() > 1)
         {
 	        toolbar.add(new JLabel("LCB weight:"));
-	
+
 	        weight_slider.setMinimum(0);
 	        weight_slider.setMaximum(lm.getLcbChangePoints().size() - 1);
 	        weight_slider.setMinorTickSpacing(1);
@@ -463,7 +463,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 	        weight_slider.setMaximumSize(prefSize);
 	        toolbar.add(weight_slider);
 	        weight_slider.addChangeListener(this);
-	
+
 	        prefSize = weight_value_text.getPreferredSize();
 	        prefSize.setSize(40, prefSize.getHeight());
 	        weight_value_text.setPreferredSize(prefSize);
@@ -481,7 +481,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 
     /**
      * Add a HintMessageListener to the list of listeners for the model.
-     * 
+     *
      * @param l listener to add
      */
     public void addHintMessageListener(HintMessageListener l) {
@@ -490,13 +490,13 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 
     /**
      * Remove a HintMessageListener from the list of listeners for this model.
-     * 
+     *
      * @param l listener to remove
      */
     public void removeHintMessageListenerListener(HintMessageListener l) {
     	hintMessageListeners.remove(HintMessageListener.class, l);
     }
-    
+
     /**
      * Invoke {@link HintMessageListener.messageChanged(ModelEvent)} on
      * this model's collection of HintMessageListener.
@@ -509,7 +509,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
             }
         }
     }
-    
+
     // CHANGE LISTENER METHODS
 
     public void stateChanged(ChangeEvent e)
@@ -538,7 +538,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
                     }
                     lm.setFillLcbBoxes(true);
                 }
-                
+
                 if (!sliderAdjustmentInProcess)
                 {
                     oldDrawMatches = model.getDrawMatches();
@@ -555,7 +555,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
                 model.setDrawMatches(oldDrawMatches);
                 sliderAdjustmentInProcess = false;
             }
-            
+
             model.updateLCBweight(min_weight, weight_slider.getValueIsAdjusting());
 
             if (weight_slider.getValueIsAdjusting())
@@ -567,16 +567,16 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     }
 
     // ACTION LISTENER METHODS
-    
+
     /**
-     * 
+     *
      */
     public void actionPerformed(ActionEvent e)
     {
     	if (e.getActionCommand().equals("Home"))
         {
             model.zoomAndMove(0, Integer.MIN_VALUE);
-            
+
             //			zoom( 100, 100 );
         }
         else if (e.getActionCommand().equals("ShiftLeft") || e.getActionCommand().equals("ScrollLeft"))
@@ -637,7 +637,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 							}
 						};
 						sw.start();
-                    }        			
+                    }
         		}catch(Exception ee){
         			ee.printStackTrace();
         		}
@@ -680,7 +680,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     public Dimension getPreferredSize()
     {
     	Dimension min_size = new Dimension();
-    	Dimension max_size = new Dimension();    	
+    	Dimension max_size = new Dimension();
     	// add up the minimum and maximum sizes of each sequence panel
     	for( int seqI = 0; seqI < model.getSequenceCount(); seqI++ ){
     		min_size.height += this.getNewPanel(seqI).getMinimumSize().height;
@@ -712,7 +712,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     boolean scrollableTracksViewportWidth = true;	// default to true
     /**
      * Match component width to viewport width?
-     */ 
+     */
     public void setScrollableTracksViewportWidth(boolean matchWidth)
     {
     	scrollableTracksViewportWidth = matchWidth;
@@ -754,7 +754,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.awt.print.Printable#print(java.awt.Graphics,
      *      java.awt.print.PageFormat, int)
      */
@@ -767,29 +767,29 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         else
         {
             Graphics2D g2d = (Graphics2D) g;
-            
+
             if (printingScale == -1)
             {
                 printingScale = pageFormat.getImageableWidth() / getWidth();
             }
-            
+
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
             g2d.scale(printingScale, printingScale);
             PrintUtilities.disableDoubleBuffering(this);
-            
-            g2d.setRenderingHint(MauveRenderingHints.KEY_SIMILARITY_DENSITY, new Double(72d / (printingResolution * printingScale)));
+
+            g2d.setRenderingHint(MauveRenderingHints.KEY_SIMILARITY_DENSITY, Double.valueOf(72d / (printingResolution * printingScale)));
             paint(g2d);
 
             PrintUtilities.enableDoubleBuffering(this);
             return PAGE_EXISTS;
         }
     }
-    
+
     public void print()
     {
         PrinterJob printJob = PrinterJob.getPrinterJob();
         printJob.setPrintable(this, pageFormat);
-        
+
         if (printJob.printDialog())
         {
             try
@@ -807,7 +807,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
             model.firePrintingEndEvent();
         }
     }
-    
+
     /**
      * @param printJob
      */
@@ -819,14 +819,14 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         {
             return 300;
         }
-        
+
         // Try 300 dpi.
         PrinterResolution pr = new PrinterResolution(300,300,PrinterResolution.DPI);
         if (ps.isAttributeValueSupported(pr, DocFlavor.SERVICE_FORMATTED.PRINTABLE, null))
         {
             return 300;
         }
-            
+
         // Fourth down: punt!
         return 72;
     }
@@ -851,7 +851,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     {
         // Ignored.
     }
-    
+
     public void referenceChanged(ModelEvent event)
     {
         // Ignored.
@@ -874,12 +874,12 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
         }
     }
 
-    
+
     /**
      * CtrlKeyDetector is used to capture the press and release of the Ctrl key
      * so that the cursor for zooming in and out can be changed.  This is necessary
      * because the normal key event handling routines do not provide access to events
-     * where just the Ctrl key and no other keys are pressed or released.  
+     * where just the Ctrl key and no other keys are pressed or released.
      */
     class CtrlKeyDetector implements KeyEventDispatcher {
         public boolean dispatchKeyEvent(KeyEvent e) {
@@ -926,7 +926,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     {
         // Ignored.
     }
-    
+
     public void modelReloadEnd(ModelEvent event)
     {
         // Ignored.
@@ -935,7 +935,7 @@ public class RearrangementPanel extends JLayeredPane implements ActionListener, 
     public void genomesReordered(ModelEvent event)
     {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void printingStart(ModelEvent event)
@@ -972,5 +972,3 @@ class GenericAction extends AbstractAction
         al.actionPerformed(e);
     }
 }
-
-

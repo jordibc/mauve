@@ -1,5 +1,5 @@
 package org.gel.mauve.analysis;
- 
+
 import java.util.Arrays;
 
 import java.util.HashMap;
@@ -22,32 +22,32 @@ import org.gel.mauve.MauveHelperFunctions;
 import org.gel.mauve.XmfaViewerModel;
 
 /**
- * A class for extracting broken CDS features from a draft genome. 
- * 
+ * A class for extracting broken CDS features from a draft genome.
+ *
  * @author atritt
  *
  */
 public class CDSErrorExporter {
 
 	private static final char BAD_CODON = '!';
-	
+
 	/**
-	 * A mapping of CDS ids to vectors containing 
+	 * A mapping of CDS ids to vectors containing
 	 * a list of all errors found in that CDS
 	 */
 	private HashMap<LiteWeightFeature,Vector<SNP>> snpErrors;
-	
+
 	private HashMap<LiteWeightFeature,Vector<Gap>> gapErrors;
-	
+
 	private XmfaViewerModel model;
-	
-	private HashMap<LiteWeightFeature,BrokenCDS> brokenCDS; 
-	
+
+	private HashMap<LiteWeightFeature,BrokenCDS> brokenCDS;
+
 	private int numCDS;
-	
+
 	private int numBrokenCDS;
-	
-	
+
+
 	public CDSErrorExporter(XmfaViewerModel model, SNP[] snps, Gap[] assGaps, Gap[] refGaps){
 		snpErrors = new HashMap<LiteWeightFeature,Vector<SNP>>();
 		gapErrors = new HashMap<LiteWeightFeature,Vector<Gap>>();
@@ -62,22 +62,22 @@ public class CDSErrorExporter {
 		bcds.addAll(gapErrors.keySet());
 		numBrokenCDS = bcds.size();
 	}
-	
+
 	public BrokenCDS[] getBrokenCDS(){
 		return brokenCDS.values().toArray(new BrokenCDS[brokenCDS.size()]);
 	}
-	
+
 	public int numBrokenCDS(){
 		return numBrokenCDS;
 	}
-	
+
 	public int numCompleteCDS(){
 		return numCDS - numBrokenCDS;
 	}
-	
+
 	/**
 	 * Finds all CDS that overlap with any of the SNPs or Gaps passed in.
-	 * 
+	 *
 	 * @param model
 	 * @param snpsAr
 	 * @param assGaps gaps in the assembly
@@ -112,7 +112,7 @@ public class CDSErrorExporter {
 				snpI++;
 			}
 		}
-		
+
 		Gap[] gaps = new Gap[assGaps.length];
 		System.arraycopy(assGaps, 0, gaps, 0, gaps.length);
 		Arrays.sort(gaps, Gap.getAlnmtPosComparator());
@@ -134,7 +134,7 @@ public class CDSErrorExporter {
 				gapI++;
 			}
 		}
-		
+
 		gaps = new Gap[refGaps.length];
 		System.arraycopy(refGaps, 0, gaps, 0, refGaps.length);
 		gapI = 0;
@@ -155,16 +155,16 @@ public class CDSErrorExporter {
 				gapI++;
 			}
 		}
-		
+
 	}
-	
+
 	private void refineBrokenCDS(){
 		loadSnpErrors();
 		loadDelErrors();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private void loadSnpErrors(){
 		Iterator<LiteWeightFeature> it = snpErrors.keySet().iterator();
@@ -196,7 +196,7 @@ public class CDSErrorExporter {
 
 	private void loadDelErrors(){
 		Iterator<LiteWeightFeature> it = gapErrors.keySet().iterator();
-		
+
 		BrokenCDS bcds = null;
 		while (it.hasNext()) {
 			LiteWeightFeature feat = it.next();
@@ -206,7 +206,7 @@ public class CDSErrorExporter {
 				System.err.println("Warning, unable to process reference gene " + feat.getID());
 			}
 		}
-		
+
 		it = snpErrors.keySet().iterator();
 		while(it.hasNext()) {
 			LiteWeightFeature feat = it.next();
@@ -216,14 +216,14 @@ public class CDSErrorExporter {
 				System.err.println("Warning, unable to process reference gene " + feat.getID());
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * Runs over the gene alignment with a fine tooth comb. 
+	 * Runs over the gene alignment with a fine tooth comb.
 	 * Here, we look for frameshift errors, AA substitution errors,
 	 * including premature stops, and gaps in the AA sequence.
-	 * 
+	 *
 	 * @param feat
 	 */
 	private void refineBrokenCDS(LiteWeightFeature feat) {
@@ -239,9 +239,9 @@ public class CDSErrorExporter {
 		if (alnmt[0].length != alnmt[1].length) {
 //			System.err.println("Different sequence lengths");
 		}
-		
+
 		byte[][][] codons = splitOnRefCodons(alnmt);
-		
+
 		int numCodons = 0;
 		int numBadCodons = 0;
 		int frameShift = 0;
@@ -250,7 +250,7 @@ public class CDSErrorExporter {
 		boolean inGap = false;
 		int lastNoGap = 1;
 		int assNACount = 0;
-		
+
 		for (int cdnI = 0; cdnI < codons.length; cdnI++) {
 			byte[][] codon = codons[cdnI];
 			String ref = new String(codon[0]);
@@ -258,10 +258,10 @@ public class CDSErrorExporter {
 			int refGapCount = numGaps(codon[0]);
 			int assGapCount = numGaps(codon[1]);
 			assNACount = assNACount + codon[1].length - assGapCount;
-			// FIXME 
+			// FIXME
 			if (frameShift % 3 == 0){ // in-frame
-				
-				
+
+
 				if (refGapCount == 0){ // make sure this isn't an inter-codon gap
 					numCodons++;
 					if (isCodon(codon[1])){ // make sure we don't have an intra-codon gap
@@ -275,7 +275,7 @@ public class CDSErrorExporter {
 								bcds.addAASubstitution(numCodons, aa_ref, aa_ass);
 							}
 						} else {
-							lastNoGap = numCodons;	
+							lastNoGap = numCodons;
 						}
 						if (inGap) { // ending the stretch of gap
 							inGap = false;
@@ -286,14 +286,14 @@ public class CDSErrorExporter {
 						numBadCodons++;
 						if (inGap) {
 							if (assGapCount % 3 == 0) { // still in frame
-								
+
 							} else { // not a gap. just a stretch of broken frame
-								
+
 							}
 						} else {
 							inGap = true;
 							lastNoGap = numCodons;
-							
+
 						}
 					}
 					lastInFrame = numCodons;
@@ -307,7 +307,7 @@ public class CDSErrorExporter {
 					}
 				}
 			} else { // out of frame, so this codon won't be correct
-				
+
 				if (isCodon(codon[0])){
 					numCodons++;
 					numBadCodons++;
@@ -315,10 +315,10 @@ public class CDSErrorExporter {
 					System.out.flush();
 				}
 				// AJT0403: check for stop codon due to frameshift here
-				
+
 			}
 			frameShift += assGapCount - refGapCount;
-			
+
 			if (inFrame) {
 				if (frameShift % 3 != 0) {
 					inFrame = false;
@@ -333,16 +333,16 @@ public class CDSErrorExporter {
 					// ending a stretch of broken frame
 				}
 			}
-	
-			
+
+
 		}
 		bcds.setAASubRate(((double)numBadCodons)/((double)numCodons));
 	}
-	
+
 	private void computeSubstitutions(LiteWeightFeature feat, char[] refSeq, char[] assSeq){
 		if (refSeq.length != assSeq.length){
 			throw new IllegalArgumentException("Sequences must be the same length: ref length = "
-										+ refSeq.length + " assembly length = " + assSeq.length); 
+										+ refSeq.length + " assembly length = " + assSeq.length);
 		}
 		try {
 			char[] tmp = RNATools.translate(
@@ -372,7 +372,7 @@ public class CDSErrorExporter {
 		} catch (IllegalAlphabetException e) {
 			e.printStackTrace();
 		}
-		
+
 		for (int i = 0; i < assSeq.length; i++){
 			if (assSeq[i] != refSeq[i]) {
 				if (assSeq[i] == '*') {
@@ -392,7 +392,7 @@ public class CDSErrorExporter {
 						brokenCDS.put(feat, tmp);
 					}
 				}
-			}                           
+			}
 		}
 	}
 
@@ -407,22 +407,22 @@ public class CDSErrorExporter {
 			if (isValidNucAcid(b)) numBases++;
 		return numBases == 3;
 	}
-	
+
 	public static boolean hasGap(byte[] ar){
 		for (int i = 0; i < ar.length; i++){
-			if (ar[i] == '-') 
+			if (ar[i] == '-')
 				return true;
 		}
 		return false;
 	}
-	
+
 	public static int numGaps(byte[] ar){
 		int ret = 0;
 		for (byte b: ar)
 			if (b == '-') ret++;
 		return ret;
 	}
-	
+
 	public static byte[] trimGaps(byte[] ar){
 		int numBases = ar.length - numGaps(ar);
 		byte[] ret = new byte[numBases];
@@ -433,28 +433,28 @@ public class CDSErrorExporter {
 		}
 		return ret;
 	}
-	
+
 	//public byte[] subArray(byte[] in, )
-	
+
 	/**
 	 * <br>
 	 * Returns an array of 2D byte arrays.
-	 * The first index of one of these 2D byte arrays will 
-	 * contain the reference codon, and the 
-	 * second index will contain the assembly 
+	 * The first index of one of these 2D byte arrays will
+	 * contain the reference codon, and the
+	 * second index will contain the assembly
 	 * codon.
 	 *</br>
 	 *
-	 * 
+	 *
 	 * <br>
-	 * Reference arrays always length [1,3] and 
+	 * Reference arrays always length [1,3] and
 	 * always have either 0 or 3 nucleic acid codes.
 	 * </br>
 	 * <br>
-	 * Assembly arrays always length [1,3] and 
+	 * Assembly arrays always length [1,3] and
 	 * can have any number of nucleic acid codes.
 	 * </br>
-	 * 
+	 *
 	 */
 	public static byte[][][] splitOnRefCodons(byte[][] ar){
 		byte[] ref = ar[0];
@@ -465,23 +465,23 @@ public class CDSErrorExporter {
 			if (isValidNucAcid(ref[i])) numBases++;
 		}
 		if (numBases % 3 != 0) {
-			throw 
+			throw
 				new IllegalArgumentException("Number of references bases - "+
 											numBases+" - not divisible by 3");
 		}
-		
+
 		Vector<byte[][]> vect = new Vector<byte[][]>();
 		int codonStart = 0;
 		int baseI = 0;
 		int codonPos = 0; // should only take on values 0,1,2,3
-		int prevCodonEnd = 0; // assume the first base in the sequence is a valid nuc. acid 
+		int prevCodonEnd = 0; // assume the first base in the sequence is a valid nuc. acid
 		boolean lookForNewCodonStart = false;
 		int nGaps = 0;
 		while (baseI < ref.length) {
 			if (isValidNucAcid(ref[baseI])) {
 				if (lookForNewCodonStart) {
 					if (prevCodonEnd != baseI-1){
-						/*  cut out the gap: everything between 
+						/*  cut out the gap: everything between
 						     prevCodonEnd (exc.) and baseI (exc.)  */
 						byte[][] tmp = new byte[2][baseI-prevCodonEnd-1];
 						System.arraycopy(ref, prevCodonEnd+1, tmp[0], 0, tmp[0].length);
@@ -496,7 +496,7 @@ public class CDSErrorExporter {
 				if (ref[baseI] == '-') {
 					nGaps++;
 				}
-				
+
 				if (nGaps == 3) {
 					nGaps = 0;
 					byte[][] tmp = new byte[2][3];
@@ -505,7 +505,7 @@ public class CDSErrorExporter {
 					vect.add(tmp);
 					prevCodonEnd = baseI;
 				}
-				
+
 				if (lookForNewCodonStart)
 					codonStart++;
 				if (baseI == 0)
@@ -513,7 +513,7 @@ public class CDSErrorExporter {
 							" : Sequence must start with a valid nucleic acid code.");
 			}
 			if (codonPos == 3) {
-				/*  cut out everything between 
+				/*  cut out everything between
 				    prevCodonEnd and baseI   */
 				byte[][] tmp = new byte[2][baseI-codonStart+1];
 				System.arraycopy(ref, codonStart, tmp[0], 0, tmp[0].length);
@@ -527,7 +527,7 @@ public class CDSErrorExporter {
 		}
 		return vect.toArray(new byte[vect.size()][][]);
 	}
-	
+
 	public static char translate(byte[] codon){
 		if (hasGap(codon)) {
 			codon = trimGaps(codon);
@@ -538,7 +538,7 @@ public class CDSErrorExporter {
 					DNATools.createDNA(
 					new String(codon))))
 					.seqString().charAt(0);
-		
+
 		} catch (IndexOutOfBoundsException e) {
 			e.printStackTrace();
 		} catch (IllegalAlphabetException e) {
@@ -548,14 +548,14 @@ public class CDSErrorExporter {
 		}
 		return '-';
 	}
-	
-	
-	
+
+
+
 	private static String getBadChars(byte[] ar){
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < ar.length; i++){
 			if (!isValidChar(ar[i])){
-				sb.append((i+1)+":"+new Character((char)ar[i]) + " ");
+				sb.append((i+1)+":"+Character.valueOf((char)ar[i]) + " ");
 			}
 		}
 		return sb.toString();

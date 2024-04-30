@@ -82,7 +82,7 @@ public class LCBStatusBar extends JPanel implements HighlightListener, HintMessa
 
         add(Box.createHorizontalStrut(1));
     }
-    
+
     public void setModel(BaseViewerModel model)
     {
         this.model = model;
@@ -111,7 +111,7 @@ public class LCBStatusBar extends JPanel implements HighlightListener, HintMessa
     private void setLocationStatus(String name, long coordinate)
     {
         segment_name.setText(name);
-        segment_loc.setText(new Long(coordinate).toString());
+        segment_loc.setText(Long.valueOf(coordinate).toString());
     }
 
     private void clearLocationStatus()
@@ -149,11 +149,11 @@ public class LCBStatusBar extends JPanel implements HighlightListener, HintMessa
         clearWeightStatus();
         clearLengthStatus();
         clearLocationStatus();
-        
+
         if (model != null)
         {
             Genome highlight = model.getHighlightGenome();
-            
+
             if (!(model instanceof XmfaViewerModel) && (model instanceof LcbViewerModel))
             {
                 LcbViewerModel lm = (LcbViewerModel) model;
@@ -182,7 +182,7 @@ public class LCBStatusBar extends JPanel implements HighlightListener, HintMessa
                     }
                 }
             }
-            
+
             Chromosome ch = highlight.getChromosomeAt(model.getHighlightCoordinate());
             if (ch != null)
             {

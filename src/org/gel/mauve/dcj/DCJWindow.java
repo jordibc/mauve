@@ -7,11 +7,13 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.text.*;
 import java.applet.Applet;
+
 /**
  * @deprecated
  * @author Mike Tsai
  *
  */
+@Deprecated
 public class DCJWindow extends JWindow {
 
 	TextArea input, output, log, ops;
@@ -52,7 +54,7 @@ public class DCJWindow extends JWindow {
 
 	public void performDCJ (String s) {
 		build ();
-		
+
 		String box2 = "";
 		output.setText (box2);
 		log.setText (box2);
@@ -89,7 +91,7 @@ public class DCJWindow extends JWindow {
 		output.setText (boxb.toString ());
 		ops.setText (boxc.toString ());
 		log.setText (boxa.toString ());
-		
+
 
 	}// end actionPerformed
 

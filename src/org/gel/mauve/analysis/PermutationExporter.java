@@ -36,31 +36,31 @@ import org.gel.mauve.LCB;
 import org.gel.mauve.LCBlist;
 import org.gel.mauve.MauveConstants;
 import org.gel.mauve.XmfaViewerModel;
-	
+
 public class PermutationExporter {
 
 	public static final char LCB_BND = 'l';
 	public static final char CTG_BND = 'c';
-	
+
 	private static Map<String,Integer> sharedBoundaryCounts = new HashMap<String, Integer>();
-	
+
 	public static LCB[] getSplitLCBs(XmfaViewerModel model){
 		Genome[] genomes = model.getGenomes().toArray(new Genome[model.getGenomes().size()]);
 		LCB[] lcbList = projectLcbList(model, model.getVisibleLcbList(),genomes);
 		lcbList = splitLcbList(model, lcbList, genomes);
 		return lcbList;
 	}
-	
+
 	/**
 	 * Computes a refined set of LCBs, returning an array containing only those
 	 * LCBs present in all of <code>genomes</code>. The return set of LCBs may contain
 	 * more LCBs than present in the alignment, as LCBs are split based on contig boundaries
-	 * 
-	 * 
-	 * @param model a model containing an alignment 
+	 *
+	 *
+	 * @param model a model containing an alignment
 	 * @param lcbList an array of LCBs
 	 * @param genomes the genomes to work with
-	 * @return an array of <code>LCB</code>s 
+	 * @return an array of <code>LCB</code>s
 	 */
 	@SuppressWarnings("unchecked")
 	public static LCB[] projectLcbList(XmfaViewerModel model, LCB[] lcbList, Genome[] genomes)
@@ -81,12 +81,12 @@ public class PermutationExporter {
 			if(j==genomes.length)
 				others[k++]=(Genome)model.getGenomes().elementAt(i);
 		}
-		
-		// genomes = the genomes to export 
+
+		// genomes = the genomes to export
 		// others =  the genomes not to export
 
 		Vector projlcbs = new Vector();
-		
+
 		for(int i=0; i<lcbList.length; i++)
 		{
 			LCB lcb = lcbList[i];
@@ -105,23 +105,23 @@ public class PermutationExporter {
 				newlcb.setRightEnd(others[o], 0);
 				newlcb.setReverse(others[o], false);
 			}
-			
+
 			projlcbs.add(newlcb);
 		}
-		
+
 		LCB[] plist = new LCB[projlcbs.size()];
 		projlcbs.toArray(plist);
 		// now that we've got all the LCBs we need, compute adjacencies
 		LCBlist.computeLCBAdjacencies(plist, model);
 		return plist;
 	}
-	
+
 	public static LCB[] splitLcbList(XmfaViewerModel model, LCB[] lcbList, Genome[] genomes){
 		HashMap<Integer, Set<Long>> break_map = new HashMap<Integer, Set<Long>>();
 		// for each LCB, accumulate the breakpoint column coordinates across all genomes for the LCB
 		for (int g = 0; g < genomes.length; g++){
 			List chrom = genomes[g].getChromosomes();
-			Iterator it = chrom.iterator();				
+			Iterator it = chrom.iterator();
 			while(it.hasNext()){
 				Chromosome chr = (Chromosome) it.next();
 				long[] chrbnds = new long[2];
@@ -129,7 +129,7 @@ public class PermutationExporter {
 				chrbnds[1] = chr.getEnd();
 				for(long chrb:chrbnds){
 					long[] splitBnd = model.getLCBAndColumn(genomes[g], chrb);
-					Integer inty = new Integer((int)(splitBnd[0]));
+					Integer inty = Integer.valueOf((int)(splitBnd[0]));
 					if(break_map.get(inty) == null){
 						break_map.put(inty, new TreeSet<Long>());
 					}
@@ -137,11 +137,11 @@ public class PermutationExporter {
 				}
 			}
 		}
-		
+
 		// now break up each LCB on the identified columns
 		Vector<LCB> projlcbs = new Vector<LCB>();
 		for(LCB lcb: lcbList){
-			Set<Long> breakset = break_map.get(new Integer(lcb.id));
+			Set<Long> breakset = break_map.get(Integer.valueOf(lcb.id));
 			if(breakset == null) continue;
 			LCB lcbCopy = new LCB(lcb);
 			long prev = 0;
@@ -152,27 +152,27 @@ public class PermutationExporter {
 			}
 			projlcbs.add(lcbCopy);
 		}
-		
+
 		LCB[] plist = new LCB[projlcbs.size()];
 		projlcbs.toArray(plist);
 		// now that we've got all the LCBs we need, compute adjacencies
 		LCBlist.computeLCBAdjacencies(plist, model);
-		return plist;		
+		return plist;
 	}
-		
+
 	/**
-	 * Returns the number of shared boundaries between contigs/chromosomes and LCB 
+	 * Returns the number of shared boundaries between contigs/chromosomes and LCB
 	 * @param model XmfaViewerModel to get this info for
-	 * @return the number of shared boundaries between contigs/chromosomes and LCBs if 
+	 * @return the number of shared boundaries between contigs/chromosomes and LCBs if
 	 * 			this number has been calculated already, -1 otherwise
 	 */
 	public static int getSharedBoundaryCount(XmfaViewerModel model){
 		Genome[] genomes = new Genome[model.getGenomes().size()];
 		model.getGenomes().toArray(genomes);
 		LCB[] lcbs = model.getFullLcbList();
-		return getSharedBoundaryCount(model, lcbs, genomes);		
+		return getSharedBoundaryCount(model, lcbs, genomes);
 	}
-	
+
 	public static int getSharedBoundaryCount(XmfaViewerModel model, LCB[] lcbs, Genome[] genomes){
 		int ret = 0;
 		for (Genome g: genomes){
@@ -183,7 +183,7 @@ public class PermutationExporter {
 		}
 		return ret;
 	}
-	
+
 	private static void loadChromosomeBoundaries(Vector<Long> bndryPts, Genome g){
 		Chromosome chr = null;
 		Iterator<Chromosome> it = g.getChromosomes().iterator();
@@ -193,14 +193,14 @@ public class PermutationExporter {
 			bndryPts.add(chr.getEnd());
 		}
 	}
-	
+
 	private static void loadLcbBoundaries(Vector<Long> bndryPts, Genome g, LCB[] lcbs){
 		for (LCB lcb: lcbs){
 			bndryPts.add(lcb.getLeftEnd(g));
 			bndryPts.add(lcb.getRightEnd(g));
 		}
 	}
-	
+
 	private static int sortAndCount(Vector<Long> list){
 		Long[] ar = new Long[list.size()];
 		list.toArray(ar);
@@ -214,22 +214,22 @@ public class PermutationExporter {
 		}
 		return ret;
 	}
-	
-	/** 
+
+	/**
 	 * Trims off everything to the left of and including col from lcb
 	 * and returns the removed segment as an LCB object.
-	 * 
+	 *
 	 * col must be less than or equal to LCB length
-	 * 
+	 *
 	 * @param model the overlying XmfaViewerModel
 	 * @param genomes the genomes of interest
 	 * @param lcb the LCB to be trimmed
 	 * @param col the alignment column to trim up to
-	 * @return the LCB trimmed off 
+	 * @return the LCB trimmed off
 	 */
-	/* FIXME - off by one error - read FIXME statement below. 
+	/* FIXME - off by one error - read FIXME statement below.
 	 * Turn on error messages below and run Permutation Exporter or DCJ Analysis for example */
-	public static LCB cropLeft (XmfaViewerModel model, Genome[] genomes, LCB lcb, long col){	
+	public static LCB cropLeft (XmfaViewerModel model, Genome[] genomes, LCB lcb, long col){
 
 		long lcbLen = model.getXmfa().getLcbLength(lcb.id);
 		if (col > lcbLen)
@@ -238,13 +238,13 @@ public class PermutationExporter {
 		long[] end_coords = new long[model.getSequenceCount()];
 		boolean[] gapStart = new boolean[model.getSequenceCount()];
 		boolean[] gapEnd = new boolean[model.getSequenceCount()];
-		
-		// Create a copy of the LCB we're trimming. Then shift the copy's 
-		// right coordinates left to the split boundary and the original's 
+
+		// Create a copy of the LCB we're trimming. Then shift the copy's
+		// right coordinates left to the split boundary and the original's
 		// left coordinates right to the split boundary.
-		
+
 		LCB newLCB = new LCB(lcb);
-			// Now we need to set new end coordinates for   
+			// Now we need to set new end coordinates for
 			// newLCB and new start coordinates for lcb
 		// Get end coordinates for newLCB...
 		model.getColumnCoordinates(lcb.id, col, end_coords, gapEnd);
@@ -254,19 +254,19 @@ public class PermutationExporter {
 		else { // col == lcbLen
 			return lcb;
 		}
-		
-		for (int j = 0; j < genomes.length; j++){ 
+
+		for (int j = 0; j < genomes.length; j++){
 			int srcIdx = genomes[j].getSourceIndex();
 			Genome g = genomes[j];
-			
+
 			if (lcb.getReverse(genomes[j])){
-			
+
 			//	if (!gapEnd[srcIdx])
 					newLCB.setLeftEnd(genomes[j], end_coords[srcIdx]);
 			//	if (!gapStart[srcIdx])
 					lcb.setRightEnd(genomes[j], start_coords[srcIdx]);
 			} else {
-				
+
 			//	if (!gapEnd[srcIdx])
 					newLCB.setRightEnd(genomes[j], end_coords[srcIdx]);
 			//	if (!gapStart[srcIdx])
@@ -275,14 +275,14 @@ public class PermutationExporter {
 			System.err.flush();
 		}
 		return newLCB;
-		
+
 	}
-	
+
 	/**
-	 * Computes the signed permutations for each genome in <code>genomes</code>. 
+	 * Computes the signed permutations for each genome in <code>genomes</code>.
 	 * Returns an array of <code>Vector</code>s (one per genome) of
-	 * <code>Vector</code>s (one per chromosome) of <code>String</code>s (one per block). 
-	 * 
+	 * <code>Vector</code>s (one per chromosome) of <code>String</code>s (one per block).
+	 *
 	 * @param model the model containing the alignment
 	 * @param genomes the genomes to compute permutations for
 	 * @return an array of <code>Vector</code>s of <code>Vector</code>s of <code>String</code>s
@@ -299,11 +299,11 @@ public class PermutationExporter {
 			lcbList = model.getVisibleLcbList();
 		}
 		// Filter out LCBs that don't pertain to our set of genomes.
-		// LCB splitting by contig boundaries has already been done for us, 
-		// so no need to split again. 
+		// LCB splitting by contig boundaries has already been done for us,
+		// so no need to split again.
 		lcbList = projectLcbList(model, lcbList, genomes);
 		Vector[] signed_perms = new Vector[seq_count];
-		
+
 
 		for (int seqI = 0; seqI < seq_count; seqI++)
 			signed_perms[seqI] = new Vector();
@@ -316,23 +316,23 @@ public class PermutationExporter {
 			max_chr_count = cur_count > max_chr_count ? cur_count
 					: max_chr_count;
 		}
-		
+
 		long [][] chr_end = new long [seq_count] [max_chr_count];
 		for (int seqI = 0; seqI < seq_count; seqI++) {
-			List chromo = genomes[seqI].getChromosomes (); 
+			List chromo = genomes[seqI].getChromosomes ();
 			// get all chromosomes, and store their lengths
 			for (int chrI = 0; chrI < chromo.size (); chrI++) {
 				chr_end[seqI][chrI] = ((Chromosome) chromo.get (chrI)).getEnd();
 			}
 		}
-		
-	
-		for (int seqI = 0; seqI < seq_count; seqI++) {  
+
+
+		for (int seqI = 0; seqI < seq_count; seqI++) {
 			Genome g = genomes[seqI];				// for each genome
 			//List chromo = g.getChromosomes ();
-			int leftmost_lcb = 0;         // 
+			int leftmost_lcb = 0;         //
 			for (; leftmost_lcb < lcbList.length; leftmost_lcb++)
-				if (lcbList[leftmost_lcb].getLeftAdjacency (g) == LCBlist.ENDPOINT)  // if  
+				if (lcbList[leftmost_lcb].getLeftAdjacency (g) == LCBlist.ENDPOINT)  // if
 					break;
 			int adjI = leftmost_lcb;
 			int cur_chromosome = 0;
@@ -347,22 +347,22 @@ public class PermutationExporter {
 					signed_perms[seqI].add(new Vector());
 					cur_chromo = (Vector)signed_perms[seqI].lastElement();
 					cur_chromosome++;
-				} 
-				if (lcbList[adjI].getReverse (g)) {
-					cur_chromo.add(new Integer(-(adjI + 1)));
-				}else{
-					cur_chromo.add(new Integer(adjI + 1));
 				}
-				
+				if (lcbList[adjI].getReverse (g)) {
+					cur_chromo.add(Integer.valueOf(-(adjI + 1)));
+				}else{
+					cur_chromo.add(Integer.valueOf(adjI + 1));
+				}
+
 				adjI = lcbList[adjI].getRightAdjacency (g);
 			}
-			
+
 		}
 		return signed_perms;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param model
 	 * @param output
 	 * @param genomes
@@ -371,35 +371,35 @@ public class PermutationExporter {
 	public static void export( XmfaViewerModel model, BufferedWriter output, Genome[] genomes ) throws IOException
 	{
 		String[] perms = getPermStrings(model,genomes, false);
-		
+
 		for (int i = 0; i < perms.length; i++){
 			output.write(perms[i]+"\n");
-			
+
 		}
 		output.flush();
 	}
-	
-	
+
+
 	/**
 	 * Returns an array of permutations corresponding to the <code>Genome</code>s passed in.
 	 * The permutation returned will apply to only those LCBs that are present in <code>genomes</code>
-	 * 
+	 *
 	 * @param model XmfaViewerModel holding alignment
 	 * @param genomes the genomes of interest.
 	 * @param splitOnCtgBnds split blocks up by contig/chromosome boundaries if true
 	 * @return an array of permutations, one for each element in <code>genomes</code>
 	 */
 	@SuppressWarnings("unchecked")
-	public static String[] getPermStrings(XmfaViewerModel model, Genome[] genomes, boolean splitOnCtgBnds) 
+	public static String[] getPermStrings(XmfaViewerModel model, Genome[] genomes, boolean splitOnCtgBnds)
 	{
 		// perms = an array of vectors of vectors. one array element per genome.
-		Vector[] perms = computeSignedPermutation(model, genomes, splitOnCtgBnds); 
+		Vector[] perms = computeSignedPermutation(model, genomes, splitOnCtgBnds);
 		StringBuilder sb = new StringBuilder();
-		
-		
+
+
 		for(int i = 0; i < perms.length; i++)
 		{
-			// perms[i] = a vector of vectors. one vector per contig 
+			// perms[i] = a vector of vectors. one vector per contig
 			for(int j = 0; j < perms[i].size(); j++)
 			{
 				// cur = a vector of "block" elements
@@ -422,7 +422,7 @@ public class PermutationExporter {
 	}
 	/**
 	 * Returns an array of permutations for all genomes in the alignment
-	 * 
+	 *
 	 *
 	 * @param model the alignment to get permutations for
 	 * @return an array of permutations, indexed by genome source index
@@ -436,10 +436,10 @@ public class PermutationExporter {
 		Vector<Genome> v = model.getGenomes();
 		return getPermStrings(model, v.toArray(new Genome[v.size()]), splitOnCtgBnds);
 	}*/
-	
+
 	public static interface Boundary extends Comparable<Boundary> {
 		public long getPos();
-		
+
 		public static class Sequence implements Boundary {
 			final long pos;
 			final int g;
@@ -454,7 +454,7 @@ public class PermutationExporter {
 			}
 			public long getPos() {return pos;}
 		}
-		
+
 		public static class Block implements Boundary {
 			final long pos;
 			final int lcb;
@@ -470,10 +470,10 @@ public class PermutationExporter {
 			public int getId() {return lcb;}
 		}
 	}
-	
+
 	public static int countInterBlockBounds(XmfaViewerModel model, Genome g){
 		int ret = 0;
-		Vector<Boundary> bnds = new Vector<Boundary>(); 
+		Vector<Boundary> bnds = new Vector<Boundary>();
 		Iterator<Chromosome> it = g.getChromosomes().iterator();
 		it.next();
 		while(it.hasNext()) {
@@ -494,8 +494,8 @@ public class PermutationExporter {
 			Boundary l = ar[i-1];
 			Boundary m = ar[i];
 			Boundary r = ar[i+1];
-			if (l instanceof Boundary.Block && 
-				m instanceof Boundary.Sequence && 
+			if (l instanceof Boundary.Block &&
+				m instanceof Boundary.Sequence &&
 				r instanceof Boundary.Block) {
 				Boundary.Block bl = (Boundary.Block) l;
 				Boundary.Block br = (Boundary.Block) r;
@@ -509,7 +509,7 @@ public class PermutationExporter {
 	//	if (ar[ar.length-1] instanceof Boundary.Sequence) ret++;
 		return ret;
 	}
-	
+
 	public static int countInterBlockBounds(XmfaViewerModel model){
 		int ret = 0;
 		Iterator<Genome> it = model.getGenomes().iterator();
@@ -518,28 +518,28 @@ public class PermutationExporter {
 		}
 		return ret;
 	}
-	
+
 	public static int countSharedContigBounds(XmfaViewerModel model, Genome[] genomes){
 		for (int gI = 0; gI < genomes.length; gI++){
 			for (int gJ = gI+1; gJ < genomes.length; gJ++){
-				
+
 			}
 		}
 		return 0;
 	}
-	
+
 	public static class ExportFrame extends JFrame
-	{	    
+	{
 	    private JTextField outputFile = new JTextField();
 	    private JFileChooser fc = new JFileChooser();
 	    private JComboBox formatSelector = new JComboBox();
 	    XmfaViewerModel model;
-	    
+
 	    public ExportFrame(XmfaViewerModel model)
 	    {
 	    	this.model = model;
 	        setSize(300,150);
-	        
+
 	        getContentPane().setLayout(new GridBagLayout());
 	        GridBagConstraints c = new GridBagConstraints();
 
@@ -556,7 +556,7 @@ public class PermutationExporter {
 	        c.anchor = GridBagConstraints.EAST;
 	        c.fill = GridBagConstraints.NONE;
 	        getContentPane().add(new JLabel("Genomes:"), c);
-	        
+
 	        // Format selector.
 	        c.gridx = 1;
 	        c.gridy = 0;
@@ -566,7 +566,7 @@ public class PermutationExporter {
 	        formatSelector.addItem("Visible");
 	        formatSelector.addItem("All");
 	        getContentPane().add(formatSelector, c);
-	        
+
 	        // File label.
 	        c.gridx = 0;
 	        c.gridy = 6;
@@ -575,7 +575,7 @@ public class PermutationExporter {
 	        c.anchor = GridBagConstraints.SOUTHEAST;
 	        c.weighty = 0;
 	        getContentPane().add(new JLabel("Output file:"), c);
-	        
+
 	        // File text box
 	        c.gridx = 1;
 	        c.gridy = 6;
@@ -585,7 +585,7 @@ public class PermutationExporter {
 	        c.anchor = GridBagConstraints.SOUTHWEST;
 	        c.weightx = 1;
 	        getContentPane().add(outputFile, c);
-	        
+
 	        // File browse button.
 	        JButton fileButton = new JButton("Browse...");
 	        fileButton.addActionListener(new ActionListener()
@@ -609,37 +609,37 @@ public class PermutationExporter {
 	        c.anchor = GridBagConstraints.SOUTHWEST;
 	        c.weightx = 0;
 	        getContentPane().add(fileButton, c);
-	        
+
 	        // Export button.
 	        JPanel buttonPanel = new JPanel();
-	        
+
 	        JButton exportButton = new JButton("Export");
 	        exportButton.addActionListener(new ActionListener()
 	                {
-	        
+
 	                    public void actionPerformed(ActionEvent e)
 	                    {
 	                        doExport();
 	                    }
-	            
+
 	                }
 	        );
-	        
+
 	        buttonPanel.add(exportButton);
-	        
+
 	        JButton cancelButton = new JButton("Cancel");
 	        cancelButton.addActionListener(new ActionListener()
 	                {
-	        
+
 	                    public void actionPerformed(ActionEvent e)
 	                    {
 	                        setVisible(false);
 	                    }
 	                }
 	        );
-	        
+
 	        buttonPanel.add(cancelButton);
-	        
+
 	        c.gridx = 0;
 	        c.gridy = 7;
 	        c.gridwidth = 3;
@@ -650,7 +650,7 @@ public class PermutationExporter {
 	        getContentPane().add(buttonPanel, c);
 	        this.setVisible(true);
 	    }
-	    
+
 	    private void doExport()
 	    {
 	        String format = (String) formatSelector.getSelectedItem();
@@ -663,7 +663,7 @@ public class PermutationExporter {
 	                return;
 	            }
 	        }
-	        
+
 	        // create a list of desired genomes in viewing index order
 	        boolean all = format.equalsIgnoreCase("All");
         	Vector<Genome> gg = new Vector<Genome>();

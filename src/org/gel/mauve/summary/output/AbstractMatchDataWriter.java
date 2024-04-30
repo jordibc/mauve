@@ -45,12 +45,12 @@ abstract public class AbstractMatchDataWriter extends AbstractTabbedDataWriter
 	public static final String AVERAGE_LENGTH = "avg_lngth";
 
 	protected ContigHandler contig_handler;
-	
+
 	protected long offset;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param model
 	 *            reference to mauve data
 	 * @param file_name
@@ -70,15 +70,15 @@ abstract public class AbstractMatchDataWriter extends AbstractTabbedDataWriter
 		if (args.get (ISLAND_MIN) != null)
 			island_min = ((Integer) args.get (ISLAND_MIN)).intValue ();
 		else
-			args.put (ISLAND_MIN, new Integer (island_min));
+			args.put (ISLAND_MIN, Integer.valueOf (island_min));
 		if (args.get (BACKBONE_MIN) != null)
 			backbone_min = ((Integer) args.get (BACKBONE_MIN)).intValue ();
 		else
-			args.put (BACKBONE_MIN, new Integer (backbone_min));
+			args.put (BACKBONE_MIN, Integer.valueOf (backbone_min));
 		if (args.get (MAX_LENGTH_RATIO) != null)
 			max_length_ratio = ((Double) args.get (MAX_LENGTH_RATIO)).doubleValue ();
 		else
-			args.put (MAX_LENGTH_RATIO, new Double (max_length_ratio));
+			args.put (MAX_LENGTH_RATIO, Double.valueOf (max_length_ratio));
 		if (args.get (CONTIG_HANDLER) != null)
 			contig_handler = (ContigHandler) args.get (CONTIG_HANDLER);
 		else
@@ -145,7 +145,7 @@ abstract public class AbstractMatchDataWriter extends AbstractTabbedDataWriter
 			value -= value * 2;
 		return value + "";
 	}
-	
+
 	public long adjustForContigs (int sequence, long value) {
 		if (offset == -1) {
 			offset = value - contig_handler.getContigCoord (sequence, value);
@@ -166,11 +166,11 @@ abstract public class AbstractMatchDataWriter extends AbstractTabbedDataWriter
 			titles = processor.makeDefaultStartEndColumnHeaders ();
 		return titles;
 	}
-	
+
 	public long getContigCoord (int sequence, long loci) {
 		return loci;
 	}
-	
+
 	public long getPseudoCoord (int sequence, long loci, String contig) {
 		return loci;
 	}
@@ -178,7 +178,7 @@ abstract public class AbstractMatchDataWriter extends AbstractTabbedDataWriter
 	public String getContigName (int sequence, long loci) {
 		return MauveConstants.DEFAULT_CONTIG;
 	}
-	
+
 	public void fixSegmentByContigs (int sequence, Segment segment) {
 	}
 

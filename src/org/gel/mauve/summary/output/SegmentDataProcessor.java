@@ -26,7 +26,7 @@ public class SegmentDataProcessor extends Hashtable implements MauveConstants {
 	protected Segment current;
 
 	protected Vector backbone;
-	
+
 	protected long all_seq_multiplicity;
 
 	public SegmentDataProcessor (Hashtable map) {
@@ -53,15 +53,15 @@ public class SegmentDataProcessor extends Hashtable implements MauveConstants {
 			all_seq_multiplicity <<= 1;
 			all_seq_multiplicity |= 1;
 		}
-		put (ALL_MULTIPLICITY, new Long (all_seq_multiplicity));
-		put (REFERENCE, new Integer (getReferenceSequence ()));
+		put (ALL_MULTIPLICITY, Long.valueOf (all_seq_multiplicity));
+		put (REFERENCE, Integer.valueOf (getReferenceSequence ()));
 		addDataLinks ();
 		//compressBackboneSegments ();
 		addUniques ();
 		//findContigsInUniques ();
 		assignIDs ();
 	}
-	
+
 	protected void findContigsInUniques () {
 		ContigHandler handler = (ContigHandler) get (CONTIG_HANDLER);
 		if (handler == null)
@@ -77,7 +77,7 @@ public class SegmentDataProcessor extends Hashtable implements MauveConstants {
 			}
 		}
 	}
-	
+
 	protected void assignIDs () {
 		Segment segment = null;
 		long all_mult = ((Long) get (ALL_MULTIPLICITY)).longValue ();
@@ -96,11 +96,11 @@ public class SegmentDataProcessor extends Hashtable implements MauveConstants {
 			} while (segment != Segment.END);
 		}
 	}
-	
+
 	public long multiplicityForGenome (int index) {
 		return multiplicityForGenome (index, count);
 	}
-	
+
 	public static long multiplicityForGenome (int index, int count) {
 		long multiplicity = 1;
 		multiplicity <<= (count - index - 1);
@@ -258,7 +258,7 @@ public class SegmentDataProcessor extends Hashtable implements MauveConstants {
 	}
 
 	protected Vector makeDefaultStartEndColumnHeaders () {
-		int divisor = (get (CONTIG_HANDLER) == null || get (CONTIG_HANDLER) 
+		int divisor = (get (CONTIG_HANDLER) == null || get (CONTIG_HANDLER)
 				instanceof AbstractMatchDataWriter) ? 2 : 3;
 		Vector titles = new Vector ();
 		int seq = -1;

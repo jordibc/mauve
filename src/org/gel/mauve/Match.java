@@ -50,93 +50,101 @@ public class Match extends Segment //implements Serializable
 
     public long getStart(Genome g)
     {
-        return left[g.getSourceIndex()]; 
+        return left[g.getSourceIndex()];
     }
-    
-    /**
-     * @deprecated
-     * @param sourceIndex
-     * @return
-     */
-    public long getStart(int sourceIndex)
-    {
-        return left[sourceIndex];
-    }
-    
-    public void setStart(Genome g, long start)
-    {
-        left[g.getSourceIndex()] = start;
-    }
-    
-    /**
-     * @deprecated
-     * @param sourceIndex
-     * @param start
-     */public void setStart(int sourceIndex, long start)
-    {
-        left[sourceIndex] = start;
-    }
-    
-    public long getLength(Genome g)
-    {
-        return right[g.getSourceIndex()];
-    }
-    
-    /**
-     * @deprecated
-     * @param sourceIndex
-     * @return
-     */
-    public long getLength(int sourceIndex)
-    {
-        return right[sourceIndex];
-    }
-    
-    public void setLength(Genome g, long length)
-    {
-        right[g.getSourceIndex()] = length;
-    }
-    
-    /**
-     * @deprecated
-     * @param sourceIndex
-     * @param length
-     */
-    public void setLength(int sourceIndex, long length)
-    {
-        right[sourceIndex] = length;
-    }
-    
-    public boolean getReverse(Genome g)
-    {
-        return reverse[g.getSourceIndex()];
-    }
-    
 
     /**
      * @deprecated
      * @param sourceIndex
      * @return
-     */public boolean getReverse(int sourceIndex)
+     */
+    @Deprecated
+    public long getStart(int sourceIndex)
+    {
+        return left[sourceIndex];
+    }
+
+    public void setStart(Genome g, long start)
+    {
+        left[g.getSourceIndex()] = start;
+    }
+
+    /**
+     * @deprecated
+     * @param sourceIndex
+     * @param start
+     */
+    @Deprecated
+    public void setStart(int sourceIndex, long start)
+    {
+        left[sourceIndex] = start;
+    }
+
+    public long getLength(Genome g)
+    {
+        return right[g.getSourceIndex()];
+    }
+
+    /**
+     * @deprecated
+     * @param sourceIndex
+     * @return
+     */
+    @Deprecated
+    public long getLength(int sourceIndex)
+    {
+        return right[sourceIndex];
+    }
+
+    public void setLength(Genome g, long length)
+    {
+        right[g.getSourceIndex()] = length;
+    }
+
+    /**
+     * @deprecated
+     * @param sourceIndex
+     * @param length
+     */
+    @Deprecated
+    public void setLength(int sourceIndex, long length)
+    {
+        right[sourceIndex] = length;
+    }
+
+    public boolean getReverse(Genome g)
+    {
+        return reverse[g.getSourceIndex()];
+    }
+
+
+    /**
+     * @deprecated
+     * @param sourceIndex
+     * @return
+     */
+    @Deprecated
+    public boolean getReverse(int sourceIndex)
     {
         return reverse[sourceIndex];
     }
-    
+
     public void setReverse(Genome g, boolean r)
     {
         reverse[g.getSourceIndex()] = r;
     }
-    
+
     /**
      * @deprecated
      * @param sourceIndex
      * @param r
      */
+    @Deprecated
     public void setReverse(int sourceIndex, boolean r)
     {
         reverse[sourceIndex] = r;
     }
-    
+
     /** Compute and return the generalized offset */
     public long offset()
     {

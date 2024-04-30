@@ -23,13 +23,13 @@ import org.gel.mauve.summary.output.SegmentDataProcessor;
 
 /**
  * contains file writing routines and variables useful to multiple classes.
- * 
+ *
  * @author Anna I Rissman
- * 
+ *
  */
 public class MauveHelperFunctions implements FlatFileFeatureConstants {
 
-	
+
 	public static final Comparator FEATURE_COMPARATOR = new Comparator () {
 		public int compare (Object a, Object b) {
 			Location one = ((Feature) a).getLocation ();
@@ -38,11 +38,11 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 					two.getMin (), two.getMax ());
 		}
 	};
-	
+
 	/**
 	 * Returns a genome name with ".fas" appended to it
 	 * if it is not already there.
-	 * 
+	 *
 	 * @param genome the genome whose name to convert
 	 * @return <code>genome.getDisplayName() + .fas</code>
 	 */
@@ -55,15 +55,15 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 		}
 		return file;
 	}
-	
+
 	public static File getRootDirectory (BaseViewerModel model) {
 		return model.getSrc ().getParentFile ();
 	}
-	
+
 	public static File getChildOfRootDir (BaseViewerModel model, String child) {
 		return new File (getRootDirectory (model), child);
 	}
-	
+
 	public static String getFileStub (BaseViewerModel model) {
 		String name = model.getSrc().getName ();
 		if (!getChildOfRootDir (model, name + ".backbone").exists())
@@ -71,10 +71,10 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 		return name;
 	}
 
-		
+
 	/**
 	 * writes out genome names and associates each with a unique index
-	 * 
+	 *
 	 * @param model
 	 *            The model containing the genomes of interest
 	 * @param out
@@ -108,38 +108,38 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 		format.setMaximumFractionDigits (decimals);
 		return format.format (number);
 	}
-	
+
 	public static String getSeqPartOfFile (SegmentDataProcessor processor) {
 		return "seq_" + processor.get (SEQUENCE_INDEX).toString ();
 	}
-	
+
 	public static String getReadableMultiplicity (Segment segment) {
 		return getReadableMultiplicity (segment.multiplicityType (), segment.left.length);
 	}
-	
+
 	public static String getReadableMultiplicity (long multiplicity, int count) {
 		String val = Long.toBinaryString (multiplicity).replace ('0', '.').replace ('1', '*');
 		while (val.length () < count)
 			val = "." + val;
 		return val;
 	}
-	
+
 	public static void addChromByStart (Hashtable table, Chromosome chrom) {
-		table.put (new Long (chrom.getStart ()), chrom);
+		table.put (Long.valueOf (chrom.getStart ()), chrom);
 	}
-	
+
 	public static Chromosome getChromByStart (Hashtable table, Chromosome chrom) {
-		return (Chromosome) table.get (new Long (chrom.getStart ()));
+		return (Chromosome) table.get (Long.valueOf (chrom.getStart ()));
 	}
-	
+
 	public static Feature getFeatByStart (Hashtable table, Chromosome chrom) {
-		return (Feature) table.get (new Long (chrom.getStart ()));
+		return (Feature) table.get (Long.valueOf (chrom.getStart ()));
 	}
-	
+
 	public static Chromosome removeChromByStart (Hashtable table, Chromosome chrom) {
-		return (Chromosome) table.remove (new Long (chrom.getStart ()));
+		return (Chromosome) table.remove (Long.valueOf (chrom.getStart ()));
 	}
-	
+
 	public static Iterator getFeatures (BaseViewerModel model, int genome) {
 		Sequence holder = (Sequence) model.getGenomeBySourceIndex (genome)
 				.getAnnotationSequence ();
@@ -153,7 +153,7 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 	/**
 	 * returns asap dbxref if exists, then any other dbxref, then label or gene
 	 * annotation if one exists.
-	 * 
+	 *
 	 * @param feat
 	 * @return
 	 */
@@ -175,13 +175,13 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 		}
 		return val;
 	}
-	
+
 	public static String getTruncatedDBXrefID (Feature feat, String header) {
 		String val = getDBXrefID (feat, header);
 		return val.substring(val.indexOf(':') + 1);
 	}
-	
-	
+
+
 	public static String getDBXrefID (Feature feat, String header) {
 		String id = null;
 		if (!feat.getAnnotation().containsProperty(DB_XREF))
@@ -207,7 +207,7 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 		}
 		return null;
 			}
-	
+
 	public static Collection getDBXrefCollection (Feature feat) {
 		Object val = feat.getAnnotation ().getProperty (DB_XREF);
 		if (val != null && val instanceof String) {
@@ -229,19 +229,19 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 			Object obj = itty.next ();
 			if (obj instanceof ComponentFeature) {
 				ComponentFeature feat = (ComponentFeature) obj;
-				all_contigs.put(new Long (feat.getLocation().getMin()), feat);
+				all_contigs.put(Long.valueOf (feat.getLocation().getMin()), feat);
 			}
 		}
 		return all_contigs;
 	}
-	
+
 	/**
 	 * Splits the byte array into an array of arrays of length <code>k</code>
-	 * 
+	 *
 	 * @param ar the array to split up
 	 * @param k the length of the mers to split <code>ar</code> into
 	 * @return an array of length <i>l</i>, where <i>l</i> = <code> r == 0 ? q : q+1 </code> </br>
-	 * 		   and <code>ar.length = q*k + r</code> 
+	 * 		   and <code>ar.length = q*k + r</code>
 	 */
 	public static byte[][] splitIntoKmers(byte[] ar, int k){
 		// ar.length = q*k + r   good ol' Division Algorithm
@@ -259,22 +259,22 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 			System.arraycopy(ar, curr, ret[merI], 0, k);
 			curr = curr+k;
 		}
-		
+
 		if (r != 0) {
 			ret[ret.length-1] = new byte[r];
 			System.arraycopy(ar,curr,ret[ret.length-1],0,r);
 		}
-		
+
 		return ret;
 	}
 
 	/**
 	 * Splits the char array into an array of arrays of length <code>k</code>
-	 * 
+	 *
 	 * @param ar the array to split up
 	 * @param k the length of the mers to split <code>ar</code> into
 	 * @return an array of length <i>l</i>, where <i>l</i> = <code> r == 0 ? q : q+1 </code> </br>
-	 * 		   and <code>ar.length = q*k + r</code> 
+	 * 		   and <code>ar.length = q*k + r</code>
 	 */
 	public static char[][] splitIntoKmers(char[] ar, int k){
 		// ar.length = q*k + r   good ol' Division Algorithm
@@ -292,12 +292,12 @@ public class MauveHelperFunctions implements FlatFileFeatureConstants {
 			System.arraycopy(ar, curr, ret[merI], 0, k);
 			curr = curr+k;
 		}
-		
+
 		if (r != 0) {
 			ret[ret.length-1] = new char[r];
 			System.arraycopy(ar,curr,ret[ret.length-1],0,r);
 		}
-		
+
 		return ret;
 	}
 }

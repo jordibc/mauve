@@ -1,264 +1,262 @@
 <project name="Mauve" default="compile">
-	<description>
-	This buildfile tells the ant build tool how to build and package the Mauve Java 
-	visualization environment.
-	</description>
-	
-	<!-- set the release version, unless making a snapshot -->
-	<target name="release_properties" unless="env.MAUVE_SNAPSHOT">
-		<property name="release.version" value="2.4.1"/>
-	</target>
+  <description>
+    This buildfile tells the ant build tool how to build and package the Mauve Java
+    visualization environment.
+  </description>
 
-	<!-- deployment locations for production ASAP integration -->
-	<property name="deploy.asapdir" value="/srv/asap/htdocs/mauve" />
-	<property name="asap.codebase" value="http://asap.ahabs.wisc.edu/asap/mauve/" />
-	<!-- deployment locations for devel ASAP integration -->
-	<!--
-	<property name="deploy.asapdir" value="/srv/asap-devel/htdocs/mauve" />
-	<property name="asap.codebase" value="http://asap.ahabs.wisc.edu/asap-devel/mauve/" />
-	-->
-	<!-- deployment locations for standalone releases -->
-	<property name="deploy.address" value="darlini8@darlinglab.org" />
-	<property name="deploy.bareaddress" value="darlinglab.org" />
-	<property name="deploy.username" value="darlini8" />
-	<property name="deploy.win32.keyfile" value="C:\Documents and Settings\koadman\plonk.ppk" />
-	<property name="deploy.serverdir" value="/home3/darlini8/www/mauve/downloads" />
-	<property name="key.alias" value="mauve" />
-	<property name="key.keystore" value="C:\Documents and Settings\koadman\My Documents\mauve-keystore" />
-	
-	<!-- set global properties for this build -->
-	<property name="src" location="src"/>
-	<property name="build" location="bin"/>
-	<property name="dist"  location="dist"/>
-	<property name="ext" location="ext"/>
- 	<property name="support" location="build_support"/>
+  <!-- set the release version, unless making a snapshot -->
+  <target name="release_properties" unless="env.MAUVE_SNAPSHOT">
+    <property name="release.version" value="2.4.1"/>
+  </target>
 
-	<!-- Make datestamp for update checks -->
-	<tstamp>
-		<format property="datestamp" pattern="yyyyMMdd" />
-	</tstamp>
-	
-	<!-- increment the build number-->
-	<buildnumber/>
-	
-	<!-- get any environment variables -->	
-	<property environment="env" />
+  <!-- deployment locations for production ASAP integration -->
+  <property name="deploy.asapdir" value="/srv/asap/htdocs/mauve" />
+  <property name="asap.codebase" value="http://asap.ahabs.wisc.edu/asap/mauve/" />
+  <!-- deployment locations for devel ASAP integration -->
+  <!--
+      <property name="deploy.asapdir" value="/srv/asap-devel/htdocs/mauve" />
+      <property name="asap.codebase" value="http://asap.ahabs.wisc.edu/asap-devel/mauve/" />
+  -->
+  <!-- deployment locations for standalone releases -->
+  <property name="deploy.address" value="darlini8@darlinglab.org" />
+  <property name="deploy.bareaddress" value="darlinglab.org" />
+  <property name="deploy.username" value="darlini8" />
+  <property name="deploy.win32.keyfile" value="C:\Documents and Settings\koadman\plonk.ppk" />
+  <property name="deploy.serverdir" value="/home3/darlini8/www/mauve/downloads" />
+  <property name="key.alias" value="mauve" />
+  <property name="key.keystore" value="C:\Documents and Settings\koadman\My Documents\mauve-keystore" />
 
-	<!-- osxant.jar creates Mac OS X disk images -->
-	<taskdef name="dmg" classname="com.amberarcher.ant.osx.DmgTask">
-		<classpath>
-			<pathelement path="${support}/osxant.jar"/>
-		</classpath>
-	</taskdef>
-	<!-- maverick-ant.jar supports secure FTP for deployment -->
-    <taskdef name="ssh" classname="com.sshtools.ant.Ssh" classpath="${support}/maverick-ant.jar"/>
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-		<classpath>
-			<pathelement path="${support}/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
-	
-	<target name="init">
-		<!-- Create the time stamp -->
-		<tstamp/>
-	</target>
-	
-	<!-- set the timestamp if building a snapshot -->
-	<target name="snapshot_properties" if="env.MAUVE_SNAPSHOT">
-		<property name="release.version" value="${datestamp}"/>
-	</target>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="bin"/>
+  <property name="dist"  location="dist"/>
+  <property name="ext" location="ext"/>
+  <property name="support" location="build_support"/>
 
-	<!-- set the version number -->
-	<target name="create_properties" depends="snapshot_properties,release_properties">
-		<propertyfile 
-			file="${src}/version.properties"
-			comment="Stores version and build information">
-			<entry key="release.version" value="${release.version}"/>
-			<entry key="build.number" value="${build.number}"/>
-			<entry key="build.timestamp" value="${datestamp}"/>
-		</propertyfile>
-	</target>
-	  
-	<target name="compile" depends="init,create_properties" description="compile the java source">
-		<!-- Create the build directory structure used by compile -->
-		<mkdir dir="${build}" />
-				
-		<!-- Build all java source files -->
-		<javac
-			classpath="
-				${ext}/core-1.9.2-SNAPSHOT.jar;
-				${ext}/bytecode-1.9.2-SNAPSHOT.jar;
-				${ext}/gui-1.9.2-SNAPSHOT.jar;
-				${ext}/commons-cli-1.2.jar;
-				${support}/junit.jar;
-				${ext}/zeus-jscl.jar;
-				${ext}/goose.jar;
-				${ext}/ant-1.7.1.jar;
-				${ext}/dbus-2.6.jar;
-				${ext}/jebl-0.4.jar;
-				${ext}/unix-0.5.jar"
-			srcdir="${src}"
-			destdir="${build}"
-			target="1.6"
-			source="1.6"
-		>
-			<compilerarg value="-Xbootclasspath/p:${env.JAVA_6_RT_PATH}"/>
-		</javac>
-		<mkdir dir="${build}/images"/>
-		<copy todir="${build}/images">
-			<fileset dir="${src}/images"/>
-		</copy>
-		<copy file="${src}/version.properties" todir="${build}"/>
-	</target>
+  <!-- Make datestamp for update checks -->
+  <tstamp>
+    <format property="datestamp" pattern="yyyyMMdd" />
+  </tstamp>
 
-	<target name="rmic" depends="compile">
-		<rmic base="${build}" classname="org.gel.mauve.remote.RemoteControlImpl" />
-	</target>
-	
-	<target name="jar" depends="rmic">
-		<!-- Make list of external dependencies -->
-		<fileset dir="${ext}" id="ext.jars">
-			<include name="**/*.jar"/>
-		</fileset>
-		<pathconvert pathsep=" " property="ext.path" refid="ext.jars">
-			<mapper>
-				<chainedmapper>
-					<mapper type="flatten" />
-					<mapper type="glob" from="*.jar" to="ext/*.jar"/>
-				</chainedmapper>
-			</mapper>
-		</pathconvert>
-		
-	    <!-- Put everything in ${build} into the Mauve.jar file -->
-		<delete file="Mauve.jar"/>
-	    <jar jarfile="Mauve.jar">
-			<fileset dir="${build}" includes="**/*" />
+  <!-- increment the build number-->
+  <buildnumber/>
 
-	    	<!-- Create a manifest file to tell java the name of the main class -->
-			<manifest>
-				<attribute name="Main-Class" value="org.gel.mauve.gui.Mauve"/>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Class-Path" value="${ext.path}" />
-				<section name="common">
-					<attribute name="Specification-Title" value="Mauve"/>
-					<attribute name="Specification-Version" value="${version}"/>
-					<attribute name="Specification-Vendor" value="Aaron E. Darling"/>
-					<attribute name="Implementation-Title" value="Mauve"/>
-					<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-					<attribute name="Implementation-Vendor" value="Aaron E. Darling"/>
-				</section>
-			</manifest>
-		 </jar>
-	</target>
-	
-	<target name="appletjar" depends="rmic">
-		<delete file="mauveApplet.jar" />
-		<jar jarfile="mauveApplet.jar">
-			<fileset dir="${build}">
-				<include name="org/gel/mauve/remote/*" />
-			</fileset>
-		</jar>
-	</target>
+  <!-- get any environment variables -->
+  <property environment="env" />
 
-	
+  <!-- osxant.jar creates Mac OS X disk images -->
+  <taskdef name="dmg" classname="com.amberarcher.ant.osx.DmgTask">
+    <classpath>
+      <pathelement path="${support}/osxant.jar"/>
+    </classpath>
+  </taskdef>
+  <!-- maverick-ant.jar supports secure FTP for deployment -->
+  <taskdef name="ssh" classname="com.sshtools.ant.Ssh" classpath="${support}/maverick-ant.jar"/>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement path="${support}/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
 
-	
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+  </target>
 
-	<target name="checkkeyprops" unless="key.password">
-		<fail message="key.password must be set on command line, using -Dkey.password=&lt;password&gt;" />
-	</target>
-	
-	<target name="signjars" depends="checkkeyprops,jar,appletjar">
-		<signjar jar="Mauve.jar" alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}" />
-		<signjar jar="mauveApplet.jar" alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}" />
-	</target>
-	
-	<target name="signextjars" depends="checkkeyprops">
-		<signjar alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}">
-			<fileset dir="./ext">
-				<include name="*.jar" />
-			</fileset>
-		</signjar>
-	</target>
-	
-	<target name="testdist" depends="signjars">
-		<copy todir="C:\htdocs" file="Mauve.jar" />
-		<copy todir="C:\htdocs" file="mauveApplet.jar" />
-		<copy todir="C:\htdocs" file="./testdata/smallAlignment.jar" />
-		<copy todir="C:\htdocs" file="./jws/index.html" />
-		<copy todir="C:\htdocs" file="./jws/mauve.jnlp" />
-	</target>
-		
-	<target name="dist" depends="jar,getChangeLog" description="generate the distribution" >
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}" />
-		
-		<!-- Set the tarball OS name based on the build host OS -->
-		<condition property="OSNAME" value="linux">
-			<os name="Linux"/>
-		</condition>
-		<condition property="OSNAME" value="OSX">
-			<os name="Mac OS X"/>
-		</condition>
+  <!-- set the timestamp if building a snapshot -->
+  <target name="snapshot_properties" if="env.MAUVE_SNAPSHOT">
+    <property name="release.version" value="${datestamp}"/>
+  </target>
 
-		<!-- Make the tarball -->
-		<tar destfile="${dist}/mauve_${OSNAME}_${release.version}.tar.gz" compression="gzip">
-			<!-- Copy various support files into the dist directory-->
-			<tarfileset dir="." prefix="/mauve_${release.version}">
-				<include name="Mauve.jar" />
-				<include name="COPYING" />
-				<include name="README" />
-				<include name="ChangeLog.html" />
-			</tarfileset>
-			<tarfileset dir="linux-x64" prefix="/mauve_${release.version}/" mode="755">
-				<include name="Mauve" />
-			</tarfileset>
-			<tarfileset dir="linux-x64" prefix="/mauve_${release.version}/linux-x64" mode="755">
-				<include name="mauveAligner" />
-				<include name="progressiveMauve" />
-			</tarfileset>
-			<tarfileset dir="${ext}" prefix="/mauve_${release.version}/ext" includes="*.jar" />
-		</tar>
-	</target>
+  <!-- set the version number -->
+  <target name="create_properties" depends="snapshot_properties,release_properties">
+    <propertyfile
+        file="${src}/version.properties"
+        comment="Stores version and build information">
+      <entry key="release.version" value="${release.version}"/>
+      <entry key="build.number" value="${build.number}"/>
+      <entry key="build.timestamp" value="${datestamp}"/>
+    </propertyfile>
+  </target>
 
-	<taskdef name="bundleapp"
-		classname="com.oracle.appbundler.AppBundlerTask"   
-		classpath="build_support/appbundler-1.0.jar" />
+  <target name="compile" depends="init,create_properties" description="compile the java source">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}" />
 
-<!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
-<target name="dmg" depends="macdist" description="Create a DMG package for MacOSX (only works on MacOSX)">
-    
+    <!-- Build all java source files -->
+    <javac
+        classpath="${ext}/core-1.9.2-SNAPSHOT.jar;
+                   ${ext}/bytecode-1.9.2-SNAPSHOT.jar;
+                   ${ext}/gui-1.9.2-SNAPSHOT.jar;
+                   ${ext}/commons-cli-1.2.jar;
+                   ${support}/junit.jar;
+                   ${ext}/zeus-jscl.jar;
+                   ${ext}/goose.jar;
+                   ${ext}/ant-1.7.1.jar;
+                   ${ext}/dbus-2.6.jar;
+                   ${ext}/jebl-0.4.jar;
+                   ${ext}/unix-0.5.jar"
+        srcdir="${src}"
+        destdir="${build}"
+        release="11"
+        includeantruntime="false"
+        includes="**/*.java"
+        debug="true"
+        debuglevel="lines,vars,source"
+        >
+      <!-- NOTE: The lines below `release="11"` are only to add debug info -->
+    </javac>
+    <mkdir dir="${build}/images"/>
+    <copy todir="${build}/images">
+      <fileset dir="${src}/images"/>
+    </copy>
+    <copy file="${src}/version.properties" todir="${build}"/>
+  </target>
+
+  <target name="jar">
+    <!-- Make list of external dependencies -->
+    <fileset dir="${ext}" id="ext.jars">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathconvert pathsep=" " property="ext.path" refid="ext.jars">
+      <mapper>
+        <chainedmapper>
+          <mapper type="flatten" />
+          <mapper type="glob" from="*.jar" to="ext/*.jar"/>
+        </chainedmapper>
+      </mapper>
+    </pathconvert>
+
+    <!-- Put everything in ${build} into the Mauve.jar file -->
+    <delete file="Mauve.jar"/>
+    <jar jarfile="Mauve.jar">
+      <fileset dir="${build}" includes="**/*" />
+
+      <!-- Create a manifest file to tell java the name of the main class -->
+      <manifest>
+        <attribute name="Main-Class" value="org.gel.mauve.gui.Mauve"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Class-Path" value="${ext.path}" />
+        <section name="common">
+          <attribute name="Specification-Title" value="Mauve"/>
+          <attribute name="Specification-Version" value="${version}"/>
+          <attribute name="Specification-Vendor" value="Aaron E. Darling"/>
+          <attribute name="Implementation-Title" value="Mauve"/>
+          <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+          <attribute name="Implementation-Vendor" value="Aaron E. Darling"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="appletjar">
+    <delete file="mauveApplet.jar" />
+    <jar jarfile="mauveApplet.jar">
+      <fileset dir="${build}">
+        <include name="org/gel/mauve/remote/*" />
+      </fileset>
+    </jar>
+  </target>
+
+
+
+
+
+  <target name="checkkeyprops" unless="key.password">
+    <fail message="key.password must be set on command line, using -Dkey.password=&lt;password&gt;" />
+  </target>
+
+  <target name="signjars" depends="checkkeyprops,jar,appletjar">
+    <signjar jar="Mauve.jar" alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}" />
+    <signjar jar="mauveApplet.jar" alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}" />
+  </target>
+
+  <target name="signextjars" depends="checkkeyprops">
+    <signjar alias="${key.alias}" storepass="${key.password}" keystore="${key.keystore}">
+      <fileset dir="./ext">
+        <include name="*.jar" />
+      </fileset>
+    </signjar>
+  </target>
+
+  <target name="testdist" depends="signjars">
+    <copy todir="C:\htdocs" file="Mauve.jar" />
+    <copy todir="C:\htdocs" file="mauveApplet.jar" />
+    <copy todir="C:\htdocs" file="./testdata/smallAlignment.jar" />
+    <copy todir="C:\htdocs" file="./jws/index.html" />
+    <copy todir="C:\htdocs" file="./jws/mauve.jnlp" />
+  </target>
+
+  <target name="dist" depends="jar,getChangeLog" description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}" />
+
+    <!-- Set the tarball OS name based on the build host OS -->
+    <condition property="OSNAME" value="linux">
+      <os name="Linux"/>
+    </condition>
+    <condition property="OSNAME" value="OSX">
+      <os name="Mac OS X"/>
+    </condition>
+
+    <!-- Make the tarball -->
+    <tar destfile="${dist}/mauve_${OSNAME}_${release.version}.tar.gz" compression="gzip">
+      <!-- Copy various support files into the dist directory-->
+      <tarfileset dir="." prefix="/mauve_${release.version}">
+        <include name="Mauve.jar" />
+        <include name="COPYING" />
+        <include name="README" />
+        <include name="ChangeLog.html" />
+      </tarfileset>
+      <tarfileset dir="linux-x64" prefix="/mauve_${release.version}/" mode="755">
+        <include name="Mauve" />
+      </tarfileset>
+      <tarfileset dir="linux-x64" prefix="/mauve_${release.version}/linux-x64" mode="755">
+        <include name="mauveAligner" />
+        <include name="progressiveMauve" />
+      </tarfileset>
+      <tarfileset dir="${ext}" prefix="/mauve_${release.version}/ext" includes="*.jar" />
+    </tar>
+  </target>
+
+  <taskdef name="bundleapp"
+           classname="com.oracle.appbundler.AppBundlerTask"
+           classpath="build_support/appbundler-1.0.jar" />
+
+  <!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
+  <target name="dmg" depends="macdist" description="Create a DMG package for MacOSX (only works on MacOSX)">
+
     <!-- Set this property value to your application name -->
     <property name="app.name" value="Mauve-${release.version}"/>
-    
+
     <!-- Set this property value to a directory where you can
-     mount temporarily your images, for example /tmp -->
+         mount temporarily your images, for example /tmp -->
     <property name="mountdir"  value="/tmp"/>
-    
+
     <!-- Delete previously created DMG -->
     <delete file="${dist}/${app.name}.dmg" quiet="yes" failonerror="false"/>
-    
+
     <!-- Create a temporary Disk Image -->
     <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-        <arg value="create"/>
-        <arg value="-srcfolder"/>
-        <arg value="staging"/>
-        <arg value="-volname"/>
-        <arg value="${app.name}"/>
-        <arg value="-ov"/>
-        <arg value="${dist}/${app.name}-tmp.dmg"/>
-        <arg value="-format"/>
-        <arg value="UDRW"/>
+      <arg value="create"/>
+      <arg value="-srcfolder"/>
+      <arg value="staging"/>
+      <arg value="-volname"/>
+      <arg value="${app.name}"/>
+      <arg value="-ov"/>
+      <arg value="${dist}/${app.name}-tmp.dmg"/>
+      <arg value="-format"/>
+      <arg value="UDRW"/>
     </exec>
-    
+
     <!-- Attach the temporary image -->
     <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-        <arg value="attach"/>
-        <arg value="${dist}/${app.name}-tmp.dmg"/>
-        <arg value="-mountroot"/>
-        <arg value="${mountdir}/"/>
+      <arg value="attach"/>
+      <arg value="${dist}/${app.name}-tmp.dmg"/>
+      <arg value="-mountroot"/>
+      <arg value="${mountdir}/"/>
     </exec>
-    
+
     <!-- Copy the background, the volume icon and DS_Store files -->
     <mkdir dir="${mountdir}/${app.name}/.background"/>
     <copy file="osx/background.png" tofile="${mountdir}/${app.name}/.background/background.png" overwrite="true"/>
@@ -268,11 +266,11 @@
 
     <!-- Indicate that we want a custom icon -->
     <exec executable="SetFile" os="Mac OS X">
-        <arg value="-a"/>
-        <arg value="C"/>
-        <arg value="${mountdir}/${app.name}"/>
+      <arg value="-a"/>
+      <arg value="C"/>
+      <arg value="${mountdir}/${app.name}"/>
     </exec>
-    
+
     <!-- Add a symbolic link to the Applications directory -->
     <symlink link="${mountdir}/${app.name}" resource="/Applications"/>
 
@@ -280,237 +278,237 @@
 
     <!-- Detach the temporary image -->
     <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-        <arg value="detach"/>
-        <arg value="${mountdir}/${app.name}"/>
+      <arg value="detach"/>
+      <arg value="${mountdir}/${app.name}"/>
     </exec>
-    
+
     <!-- Compress it to a new image -->
     <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-        <arg value="convert"/>
-        <arg value="${dist}/${app.name}-tmp.dmg"/>
-        <arg value="-format"/>
-        <arg value="UDZO"/>
-        <arg value="-o"/>
-        <arg value="${dist}/${app.name}.dmg"/>
+      <arg value="convert"/>
+      <arg value="${dist}/${app.name}-tmp.dmg"/>
+      <arg value="-format"/>
+      <arg value="UDZO"/>
+      <arg value="-o"/>
+      <arg value="${dist}/${app.name}.dmg"/>
     </exec>
-    
+
     <!-- Delete the temporary image -->
     <delete file="${dist}/${app.name}-tmp.dmg" quiet="yes" failonerror="false"/>
-</target>
+  </target>
 
 
-	<!-- Create an OS X application and disk image -->
-	<target name="macdist" depends="jar,getChangeLog" description="Generate a Mac OS X disk image" >
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}" />
-		<delete dir="${dist}/Mauve.app"/>
+  <!-- Create an OS X application and disk image -->
+  <target name="macdist" depends="jar,getChangeLog" description="Generate a Mac OS X disk image" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}" />
+    <delete dir="${dist}/Mauve.app"/>
 
-        <!-- get the java home -->
-        <exec executable="/usr/libexec/java_home" os="Mac OS X" failonerror="true" outputproperty="osx.java.home"/>
-		<bundleapp outputdirectory="${dist}"
-			name="Mauve"
-			displayname="Mauve ${release.version}"
-			identifier="components.Mauve"
-			icon="osx/mauve.icns"
-			shortversion="${release.version}"
-			copyright="(c) 2003-2015  http://darlinglab.org/mauve"
-			mainclassname="org.gel.mauve.gui.Mauve">
-			<classpath file="Mauve.jar" />
-			<classpath file="ext/*.jar" />
-			<librarypath file="osx/progressiveMauve" />
-			<librarypath file="osx/mauveAligner" />
-            <runtime dir="${osx.java.home}" />
-            <option value="-Dapple.laf.useScreenMenuBar=false"/>
-            <option value="-Xmx500m"/>
-		</bundleapp>
-		
-		<!-- Create a staging directory for the Disk Image filesystem -->
-		<mkdir dir="staging"/>
-        <exec executable="ditto" failonerror="true">
-                <arg value="-v"/>
-                <arg value="${dist}/Mauve.app"/>
-                <arg value="staging/Mauve.app"/>
-        </exec>
-		<copy todir="staging">
-			<fileset dir="${basedir}">
-				<include name="ChangeLog.html"/>
-			</fileset>
-		</copy>
-		
-		<!-- copy text files to the staging directory, adding .txt
-		     to their filename -->
-		<copy todir="staging">
-			<fileset dir="${basedir}">
-				<include name="COPYING"/>
-			</fileset>
-			<mapper type="glob" from="*" to="*.txt"/>
-		</copy>
-		<chmod file="staging/Mauve.app/Contents/MacOS/JavaAppLauncher" perm="755"/>
-		<chmod file="staging/Mauve.app/Contents/MacOS/mauveAligner" perm="755"/>
-		<chmod file="staging/Mauve.app/Contents/MacOS/progressiveMauve" perm="755"/>
+    <!-- get the java home -->
+    <exec executable="/usr/libexec/java_home" os="Mac OS X" failonerror="true" outputproperty="osx.java.home"/>
+    <bundleapp outputdirectory="${dist}"
+               name="Mauve"
+               displayname="Mauve ${release.version}"
+               identifier="components.Mauve"
+               icon="osx/mauve.icns"
+               shortversion="${release.version}"
+               copyright="(c) 2003-2015  http://darlinglab.org/mauve"
+               mainclassname="org.gel.mauve.gui.Mauve">
+      <classpath file="Mauve.jar" />
+      <classpath file="ext/*.jar" />
+      <librarypath file="osx/progressiveMauve" />
+      <librarypath file="osx/mauveAligner" />
+      <runtime dir="${osx.java.home}" />
+      <option value="-Dapple.laf.useScreenMenuBar=false"/>
+      <option value="-Xmx500m"/>
+    </bundleapp>
 
-<!-- sign the app -->
-<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
-    <arg value="-s"/>
-    <arg value="Developer ID Application: Aaron Darling"/>
-    <arg value="--deep"/>
-    <arg value="staging/Mauve.app"/>
-</exec>
-<!---->
+    <!-- Create a staging directory for the Disk Image filesystem -->
+    <mkdir dir="staging"/>
+    <exec executable="ditto" failonerror="true">
+      <arg value="-v"/>
+      <arg value="${dist}/Mauve.app"/>
+      <arg value="staging/Mauve.app"/>
+    </exec>
+    <copy todir="staging">
+      <fileset dir="${basedir}">
+        <include name="ChangeLog.html"/>
+      </fileset>
+    </copy>
 
-<!--        <dmg destfile="${dist}/Mauve-${release.version}.dmg" name="Mauve ${release.version}" srcdir="staging" compressed="true"/> -->
-	</target>
+    <!-- copy text files to the staging directory, adding .txt
+         to their filename -->
+    <copy todir="staging">
+      <fileset dir="${basedir}">
+        <include name="COPYING"/>
+      </fileset>
+      <mapper type="glob" from="*" to="*.txt"/>
+    </copy>
+    <chmod file="staging/Mauve.app/Contents/MacOS/JavaAppLauncher" perm="755"/>
+    <chmod file="staging/Mauve.app/Contents/MacOS/mauveAligner" perm="755"/>
+    <chmod file="staging/Mauve.app/Contents/MacOS/progressiveMauve" perm="755"/>
 
-	<target name="srcdist" depends="init" description="package a source distribution">
-		<tar destfile="${dist}/mauve_source_${datestamp}.tar.gz" compression="gzip">
-			<!-- Copy support files into the dist directory-->
-			<tarfileset dir="." prefix="/mauve-src">
-				<include name="COPYING" />
-				<include name="Mauve" />
-				<include name="README" />
-				<include name="TODO" />
-				<include name="ChangeLog.html" />
-				<include name="build.xml" />
-				<include name="mauve.nsi" />
-				<include name="mauve.dox" />
-				<include name="mauve.ico" />
-				<include name=".project" />
-				<include name=".classpath" />
-				<include name="mauve.icns" />
-				<include name="Mauve Online Documentation.url" />
-				<include name="Mauve.lnk" />
-			</tarfileset>
-			<tarfileset dir="${src}" includes="**/*" prefix="/mauve-src/src" />
-		</tar>
-	</target>
+    <!-- sign the app -->
+    <exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
+      <arg value="-s"/>
+      <arg value="Developer ID Application: Aaron Darling"/>
+      <arg value="--deep"/>
+      <arg value="staging/Mauve.app"/>
+    </exec>
+    <!---->
 
-	<target name="getChangeLog" >
-		<get src="http://darlinglab.org/mauve/user-guide/versions.html" dest="ChangeLog.html" usetimestamp="true"/>
-		<copy file="ChangeLog.html" tofile="ChangeLog"/>
-	</target>
+    <!--        <dmg destfile="${dist}/Mauve-${release.version}.dmg" name="Mauve ${release.version}" srcdir="staging" compressed="true"/> -->
+  </target>
 
-	<target name="nsicompile" depends="jar,getChangeLog" description="make windows installer" >
+  <target name="srcdist" depends="init" description="package a source distribution">
+    <tar destfile="${dist}/mauve_source_${datestamp}.tar.gz" compression="gzip">
+      <!-- Copy support files into the dist directory-->
+      <tarfileset dir="." prefix="/mauve-src">
+        <include name="COPYING" />
+        <include name="Mauve" />
+        <include name="README" />
+        <include name="TODO" />
+        <include name="ChangeLog.html" />
+        <include name="build.xml" />
+        <include name="mauve.nsi" />
+        <include name="mauve.dox" />
+        <include name="mauve.ico" />
+        <include name=".project" />
+        <include name=".classpath" />
+        <include name="mauve.icns" />
+        <include name="Mauve Online Documentation.url" />
+        <include name="Mauve.lnk" />
+      </tarfileset>
+      <tarfileset dir="${src}" includes="**/*" prefix="/mauve-src/src" />
+    </tar>
+  </target>
 
-		<!-- create output directory -->
-		<mkdir dir="${dist}" />
+  <target name="getChangeLog" >
+    <get src="http://darlinglab.org/mauve/user-guide/versions.html" dest="ChangeLog.html" usetimestamp="true"/>
+    <copy file="ChangeLog.html" tofile="ChangeLog"/>
+  </target>
 
-		<!-- Make timestamp and timestampdash for installer making -->
-		<property environment="env" />
-		<echo message="Program files: ${env.ProgramFiles}"/>
-		<exec executable="C:\Program Files (x86)\NSIS\makensis.exe" dir=".">
-			<arg line="/V2 /NOCD win32\mauve.nsi" />
-			<env key="release_version" value="${release.version}" />
-			<env key="datestamp" value="${datestamp}" />
-		</exec>
-	</target>
-		
-	
-	<target name="run" depends="jar" description="run Mauve">
-		<java jar="Mauve.jar" fork="true" />
-	</target>
-	
-	<target name="asapResources">
-		<pathconvert property="asap.resources" pathsep=" ">
-			<path>
-				<fileset dir="./ext">
-					<include name="*.jar" />
-				</fileset>
-			</path>
-			<mapper>			
-		        <chainedmapper>
-		    		<mapper type="flatten" />
-		    		<mapper type="glob" from="*" to="&lt;jar href=&quot;*&quot; /&gt;&#13;&#10;"/>
-		        </chainedmapper>
-			</mapper>
-		</pathconvert>
-	</target>
-	
-	<target name="deployASAP" depends="signjars, asapResources">
-		
-		<echo message="Deploying mauve ASAP stuff to directory ${asap.dir}" />
-		<echo message="Using codebase of ${asap.codebase}" />
-		
-		<!-- update and copy mauve.jnlp to dist-->
-		<copy file="./jws/mauve.jnlp.template" tofile="${dist}/mauve.jnlp" overwrite="yes">
-			<filterset>
-				<filter token="CODEBASE" value="${asap.codebase}"/>
-				<filter token="RESOURCES" value="${asap.resources}"/>
-				<filter token="ARGUMENTS" value=""/>
-			</filterset>
-		</copy>
+  <target name="nsicompile" depends="jar,getChangeLog" description="make windows installer" >
 
-		<!-- copy unmodified files to the server -->
-		<ssh host="${deploy.bareaddress}"
-			username="${deploy.username}"
-			version="2"
-			keyfile="${deploy.win32.keyfile}">
-			<sftp action="put" remotedir="${deploy.asapdir}" verbose="true" newer="true">
-				<fileset dir=".">
-					<include name="Mauve.jar" />
-					<include name="mauveApplet.jar" />
-				</fileset>
-				<fileset dir="./ext">
-					<include name="*.jar"/>
-				</fileset>
-				<fileset dir="./src/images">
-					<include name="mauve_icon.gif" />
-					<include name="mauve_logo.png" />
-				</fileset>
-				<fileset dir="${dist}">
-					<include name="mauve.jnlp"/>
-				</fileset>
-			</sftp>
-			<!-- set the permissions so others in the group can modify them -->
-			<exec cmd="chgrp annotation ${deploy.asapdir}/*"/>
-			<exec cmd="chmod 664 ${deploy.asapdir}/*"/>
-			<!-- jar files should have the execute bit set -->
-			<exec cmd="chmod 775 ${deploy.asapdir}/*.jar"/>
-		</ssh>
-	</target>
-	
-	<!-- assumes that an ssh key has been registered with the web server -->
-	<target name="deployWin32" depends="nsicompile">
-		<echo file="${dist}\latest" message="${datestamp}"/>
-		<echo file="${dist}\latest.windows" message="${datestamp}"/>
-		<ssh host="${deploy.bareaddress}"
-			username="${deploy.username}"
-			version="2"
-			keyfile="${deploy.win32.keyfile}">
+    <!-- create output directory -->
+    <mkdir dir="${dist}" />
 
-			<sftp action="put" remotedir="${deploy.serverdir}" verbose="true">
-				<fileset dir="${dist}">
-					<include name="mauve_installer_${release.version}.exe"/>
-					<include name="${dist}\latest"/>
-					<include name="${dist}\latest.windows"/>
-				</fileset>
-			</sftp>
-			<exec cmd="cp ${deploy.serverdir}/mauve_installer_${release.version}.exe ${deploy.serverdir}/mauve_installer_${datestamp}.exe"/>
-		</ssh>
-	</target>
+    <!-- Make timestamp and timestampdash for installer making -->
+    <property environment="env" />
+    <echo message="Program files: ${env.ProgramFiles}"/>
+    <exec executable="C:\Program Files (x86)\NSIS\makensis.exe" dir=".">
+      <arg line="/V2 /NOCD win32\mauve.nsi" />
+      <env key="release_version" value="${release.version}" />
+      <env key="datestamp" value="${datestamp}" />
+    </exec>
+  </target>
 
-	<!-- assumes that passwordless ssh authentication has been configured to the web server -->
-	<target name="deployMacOSX" depends="dmg">
-		<exec executable="scp">
-			<arg value="${dist}/Mauve-${release.version}.dmg" />
-			<arg value="${deploy.address}:${deploy.serverdir}" />
-		</exec>
-		<echo file="${dist}/latest.mac" message="${datestamp}"/>
-		<exec executable="scp">
-			<arg value="${dist}/latest.mac" />
-			<arg value="${deploy.address}:${deploy.serverdir}" />
-		</exec>
-	</target>
 
-	<!-- assumes that passwordless ssh authentication has been configured to the web server -->
-	<target name="deployLinux" depends="dist">
-		<exec executable="scp">
-			<arg value="${dist}/mauve_linux_${release.version}.tar.gz" />
-			<arg value="${deploy.address}:${deploy.serverdir}" />
-		</exec>
-		<echo file="${dist}/latest.linux" message="${datestamp}"/>
-		<exec executable="scp">
-			<arg value="${dist}/latest.linux" />
-			<arg value="${deploy.address}:${deploy.serverdir}" />
-		</exec>
-	</target>
+  <target name="run" depends="jar" description="run Mauve">
+    <java jar="Mauve.jar" fork="true" />
+  </target>
+
+  <target name="asapResources">
+    <pathconvert property="asap.resources" pathsep=" ">
+      <path>
+        <fileset dir="./ext">
+          <include name="*.jar" />
+        </fileset>
+      </path>
+      <mapper>
+        <chainedmapper>
+          <mapper type="flatten" />
+          <mapper type="glob" from="*" to="&lt;jar href=&quot;*&quot; /&gt;&#13;&#10;"/>
+        </chainedmapper>
+      </mapper>
+    </pathconvert>
+  </target>
+
+  <target name="deployASAP" depends="signjars, asapResources">
+
+    <echo message="Deploying mauve ASAP stuff to directory ${asap.dir}" />
+    <echo message="Using codebase of ${asap.codebase}" />
+
+    <!-- update and copy mauve.jnlp to dist-->
+    <copy file="./jws/mauve.jnlp.template" tofile="${dist}/mauve.jnlp" overwrite="yes">
+      <filterset>
+        <filter token="CODEBASE" value="${asap.codebase}"/>
+        <filter token="RESOURCES" value="${asap.resources}"/>
+        <filter token="ARGUMENTS" value=""/>
+      </filterset>
+    </copy>
+
+    <!-- copy unmodified files to the server -->
+    <ssh host="${deploy.bareaddress}"
+         username="${deploy.username}"
+         version="2"
+         keyfile="${deploy.win32.keyfile}">
+      <sftp action="put" remotedir="${deploy.asapdir}" verbose="true" newer="true">
+        <fileset dir=".">
+          <include name="Mauve.jar" />
+          <include name="mauveApplet.jar" />
+        </fileset>
+        <fileset dir="./ext">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="./src/images">
+          <include name="mauve_icon.gif" />
+          <include name="mauve_logo.png" />
+        </fileset>
+        <fileset dir="${dist}">
+          <include name="mauve.jnlp"/>
+        </fileset>
+      </sftp>
+      <!-- set the permissions so others in the group can modify them -->
+      <exec cmd="chgrp annotation ${deploy.asapdir}/*"/>
+      <exec cmd="chmod 664 ${deploy.asapdir}/*"/>
+      <!-- jar files should have the execute bit set -->
+      <exec cmd="chmod 775 ${deploy.asapdir}/*.jar"/>
+    </ssh>
+  </target>
+
+  <!-- assumes that an ssh key has been registered with the web server -->
+  <target name="deployWin32" depends="nsicompile">
+    <echo file="${dist}\latest" message="${datestamp}"/>
+    <echo file="${dist}\latest.windows" message="${datestamp}"/>
+    <ssh host="${deploy.bareaddress}"
+         username="${deploy.username}"
+         version="2"
+         keyfile="${deploy.win32.keyfile}">
+
+      <sftp action="put" remotedir="${deploy.serverdir}" verbose="true">
+        <fileset dir="${dist}">
+          <include name="mauve_installer_${release.version}.exe"/>
+          <include name="${dist}\latest"/>
+          <include name="${dist}\latest.windows"/>
+        </fileset>
+      </sftp>
+      <exec cmd="cp ${deploy.serverdir}/mauve_installer_${release.version}.exe ${deploy.serverdir}/mauve_installer_${datestamp}.exe"/>
+    </ssh>
+  </target>
+
+  <!-- assumes that passwordless ssh authentication has been configured to the web server -->
+  <target name="deployMacOSX" depends="dmg">
+    <exec executable="scp">
+      <arg value="${dist}/Mauve-${release.version}.dmg" />
+      <arg value="${deploy.address}:${deploy.serverdir}" />
+    </exec>
+    <echo file="${dist}/latest.mac" message="${datestamp}"/>
+    <exec executable="scp">
+      <arg value="${dist}/latest.mac" />
+      <arg value="${deploy.address}:${deploy.serverdir}" />
+    </exec>
+  </target>
+
+  <!-- assumes that passwordless ssh authentication has been configured to the web server -->
+  <target name="deployLinux" depends="dist">
+    <exec executable="scp">
+      <arg value="${dist}/mauve_linux_${release.version}.tar.gz" />
+      <arg value="${deploy.address}:${deploy.serverdir}" />
+    </exec>
+    <echo file="${dist}/latest.linux" message="${datestamp}"/>
+    <exec executable="scp">
+      <arg value="${dist}/latest.linux" />
+      <arg value="${deploy.address}:${deploy.serverdir}" />
+    </exec>
+  </target>
 </project>

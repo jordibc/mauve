@@ -42,7 +42,7 @@ import org.gel.mauve.MyConsole;
 public class ExportFrame extends JFrame
 {
     private final static DecimalFormat FORMAT = new DecimalFormat("##########");
-    
+
     private RearrangementPanel rrpanel;
     private JTextField outputFile = new JTextField();
     private JFileChooser fc = new JFileChooser();
@@ -55,12 +55,12 @@ public class ExportFrame extends JFrame
 
     private float jpegQuality = 0.75f;
     private ButtonGroup qualityGroup = new ButtonGroup();
-    
+
     public ExportFrame(RearrangementPanel rrpanel)
     {
         this.rrpanel = rrpanel;
         setSize(300,300);
-        
+
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -75,7 +75,7 @@ public class ExportFrame extends JFrame
         c.anchor = GridBagConstraints.EAST;
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(new JLabel("Format:"), c);
-        
+
         // Format selector.
         c.gridx = 1;
         c.gridy = 0;
@@ -89,7 +89,7 @@ public class ExportFrame extends JFrame
                     public void actionPerformed(ActionEvent e)
                     {
                         String format = (String) formatSelector.getSelectedItem();
-                        
+
                         if (format.equals("JPEG"))
                         {
                             Enumeration buttons = ExportFrame.this.qualityGroup.getElements();
@@ -110,7 +110,7 @@ public class ExportFrame extends JFrame
                         }
                     }
                 }
-        );	
+        );
         getContentPane().add(formatSelector, c);
 
         // Image size label.
@@ -121,24 +121,24 @@ public class ExportFrame extends JFrame
         c.anchor = GridBagConstraints.EAST;
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(new JLabel("Image size:"), c);
-        
+
         // Image size boxes.
         JPanel scalePanel = new JPanel();
         scalePanel.setLayout(new GridBagLayout());
         GridBagConstraints c2 = new GridBagConstraints();
-        
+
         // Width label
         c2.gridx = 0;
         c2.gridy = 0;
         scalePanel.add(new JLabel("Width:"), c2);
-        
+
         // Width box
         c2.gridx = 1;
         c2.weightx = 1;
         c2.insets = new Insets(0,0,0,4);
         c2.fill = GridBagConstraints.HORIZONTAL;
         scalePanel.add(widthBox,c2);
-        widthBox.setValue(new Integer(rrpanel.getWidth()));
+        widthBox.setValue(Integer.valueOf(rrpanel.getWidth()));
         widthBox.getDocument().addUndoableEditListener(new UndoableEditListener()
                 {
                     public void undoableEditHappened(UndoableEditEvent evt)
@@ -170,8 +170,8 @@ public class ExportFrame extends JFrame
         c2.fill = GridBagConstraints.HORIZONTAL;
         scalePanel.add(heightBox,c2);
         heightBox.setEditable(false);
-        heightBox.setValue(new Integer(rrpanel.getHeight()));
-        
+        heightBox.setValue(Integer.valueOf(rrpanel.getHeight()));
+
         // Adding scale panel.
         c.gridx = 1;
         c.gridy = 1;
@@ -189,7 +189,7 @@ public class ExportFrame extends JFrame
         c.fill = GridBagConstraints.NONE;
 
         getContentPane().add(new JLabel("Quality:"), c);
-        
+
         // Quality options
 
         c.gridx = 1;
@@ -197,8 +197,8 @@ public class ExportFrame extends JFrame
         c.gridwidth = 2;
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
-        
-        
+
+
         JRadioButton lowButton = new JRadioButton("Low", false);
         lowButton.addActionListener(new ActionListener()
                 {
@@ -207,7 +207,7 @@ public class ExportFrame extends JFrame
                     {
                         jpegQuality = 0.25f;
                     }
-            
+
                 }
         );
         JRadioButton mediumButton = new JRadioButton("Medium", false);
@@ -218,7 +218,7 @@ public class ExportFrame extends JFrame
                     {
                         jpegQuality = 0.5f;
                     }
-            
+
                 }
         );
         JRadioButton highButton = new JRadioButton("High", true);
@@ -229,7 +229,7 @@ public class ExportFrame extends JFrame
                     {
                         jpegQuality = 0.75f;
                     }
-            
+
                 }
         );
         JRadioButton maximumButton = new JRadioButton("Maximum", false);
@@ -240,7 +240,7 @@ public class ExportFrame extends JFrame
                     {
                         jpegQuality = 1;
                     }
-            
+
                 }
         );
 
@@ -248,7 +248,7 @@ public class ExportFrame extends JFrame
         qualityGroup.add(mediumButton);
         qualityGroup.add(highButton);
         qualityGroup.add(maximumButton);
-        
+
         getContentPane().add(lowButton, c);
         c.gridy = 3;
         getContentPane().add(mediumButton,c);
@@ -256,7 +256,7 @@ public class ExportFrame extends JFrame
         getContentPane().add(highButton,c);
         c.gridy = 5;
         getContentPane().add(maximumButton,c);
-        
+
         // File label.
         c.gridx = 0;
         c.gridy = 6;
@@ -265,7 +265,7 @@ public class ExportFrame extends JFrame
         c.anchor = GridBagConstraints.SOUTHEAST;
         c.weighty = 0;
         getContentPane().add(new JLabel("Output file:"), c);
-        
+
         // File text box
         c.gridx = 1;
         c.gridy = 6;
@@ -275,7 +275,7 @@ public class ExportFrame extends JFrame
         c.anchor = GridBagConstraints.SOUTHWEST;
         c.weightx = 1;
         getContentPane().add(outputFile, c);
-        
+
         // File browse button.
         JButton fileButton = new JButton("Browse...");
         fileButton.addActionListener(new ActionListener()
@@ -299,37 +299,37 @@ public class ExportFrame extends JFrame
         c.anchor = GridBagConstraints.SOUTHWEST;
         c.weightx = 0;
         getContentPane().add(fileButton, c);
-        
+
         // Export button.
         JPanel buttonPanel = new JPanel();
-        
+
         JButton exportButton = new JButton("Export");
         exportButton.addActionListener(new ActionListener()
                 {
-        
+
                     public void actionPerformed(ActionEvent e)
                     {
                         doExport();
                     }
-            
+
                 }
         );
-        
+
         buttonPanel.add(exportButton);
-        
+
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener()
                 {
-        
+
                     public void actionPerformed(ActionEvent e)
                     {
                         setVisible(false);
                     }
                 }
         );
-        
+
         buttonPanel.add(cancelButton);
-        
+
         c.gridx = 0;
         c.gridy = 7;
         c.gridwidth = 3;
@@ -339,14 +339,14 @@ public class ExportFrame extends JFrame
 
         getContentPane().add(buttonPanel, c);
     }
-    
+
     private void doExport()
     {
         String format = (String) formatSelector.getSelectedItem();
     	File f = getFileWithExtension(outputFile.getText(), format);
         export(f, scale, format);
     }
-    
+
     private File getFileWithExtension(String fileName, String format)
     {
     	String lastFour = "";
@@ -357,7 +357,7 @@ public class ExportFrame extends JFrame
     		lastFive = fileName.substring(fileName.length()-5);
     	if(format.equalsIgnoreCase("JPEG"))
     	{
-    		if(!lastFive.equalsIgnoreCase(".jpeg") && 
+    		if(!lastFive.equalsIgnoreCase(".jpeg") &&
     				!lastFour.equalsIgnoreCase(".jpg") )
     			fileName += ".jpg";
     	}else if(format.equalsIgnoreCase("PNG"))
@@ -378,19 +378,19 @@ public class ExportFrame extends JFrame
                 return;
             }
         }
-        
+
         BufferedImage img = new BufferedImage((int) (rrpanel.getWidth() * scale), (int) (rrpanel.getHeight() * scale), BufferedImage.TYPE_INT_RGB);
-        
+
         Graphics2D g2 = (Graphics2D) img.getGraphics();
-        
+
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.scale(scale, scale);
-        
-        g2.setRenderingHint(MauveRenderingHints.KEY_SIMILARITY_DENSITY, new Double(1.0 / scale));
+
+        g2.setRenderingHint(MauveRenderingHints.KEY_SIMILARITY_DENSITY, Double.valueOf(1.0 / scale));
         rrpanel.paint(g2);
 
-        
-        
+
+
         if (formatName.equals("JPEG"))
         {
             try
@@ -402,7 +402,7 @@ public class ExportFrame extends JFrame
     			JOptionPane.showMessageDialog(this, "Error writing file.", "Error Writing File", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return;
-            }        
+            }
         }
         else
         {
@@ -417,11 +417,11 @@ public class ExportFrame extends JFrame
     			return;
             }
         }
-        
+
         setVisible(false);
     }
-    
-    
+
+
     /**
      * @param outputFile
      * @param img
@@ -434,7 +434,7 @@ public class ExportFrame extends JFrame
         {
             throw new RuntimeException("Couldn't find jpeg image writer.");
         }
-        
+
         ImageWriter writer = (ImageWriter)iter.next();
 
         // Prepare output file
@@ -457,8 +457,8 @@ public class ExportFrame extends JFrame
 
     private void scaleWidth(int width)
     {
-        scale = width / (double) rrpanel.getWidth(); 
-        heightBox.setValue(new Integer((int) (rrpanel.getHeight() * scale)));
+        scale = width / (double) rrpanel.getWidth();
+        heightBox.setValue(Integer.valueOf((int) (rrpanel.getHeight() * scale)));
     }
-    
+
 }

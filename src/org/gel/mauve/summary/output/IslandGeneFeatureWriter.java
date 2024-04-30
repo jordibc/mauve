@@ -15,14 +15,14 @@ import org.gel.mauve.MauveHelperFunctions;
 import org.gel.mauve.analysis.Segment;
 
 public class IslandGeneFeatureWriter extends IslandFeatureWriter {
-	
+
 	public static final String PERCENT = "prct_on_is";
 	public static final int ISLAND_COL = -2;
 	public static final int PERCENT_COL = -1;
 	public static final String BACKBONE_MASK = "backbone_mask";
 	public static StringBuffer ids = new StringBuffer ();
 	public static int buffer_count;
-	
+
 	protected BaseViewerModel model;
 	protected ListIterator iterator;
 	protected Feature cur_feat;
@@ -31,15 +31,15 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 	protected int [][] num_per_multiplicity;
 	protected boolean backbone_instead;
 	protected int [] num_features;
-	
+
 	public static final String ISLAND_GENE = "island_gene";
-	
-	
+
+
 	protected IslandGeneFeatureWriter (SegmentDataProcessor processor) {
 		super (MauveHelperFunctions.getSeqPartOfFile (processor) + (processor.get (
 				BACKBONE_MASK) != null ? "backbone" : "island") + "_genes", processor);
 	}
-	
+
 	protected void initSubClassParticulars (Hashtable args) {
 		super.initSubClassParticulars (args);
 		model = (BaseViewerModel) args.get (MODEL);
@@ -48,7 +48,7 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 					MINIMUM_PERCENT_CONTAINED)).doubleValue ();
 		else {
 			minimum_percent = DEFAULT_MIN_PERCENT_CONTAINED;
-			args.put (MINIMUM_PERCENT_CONTAINED, new Double (minimum_percent));
+			args.put (MINIMUM_PERCENT_CONTAINED, Double.valueOf (minimum_percent));
 		}
 		if (args.get (BACKBONE_MASK) != null)
 			backbone_instead = true;
@@ -65,7 +65,7 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 		if (iterator.hasNext ())
 			cur_feat = (Feature) iterator.next ();
 	}
-	
+
 	public Vector setColumnHeaders () {
 		Vector vect = super.setColumnHeaders ();
 		vect.remove (vect.size () - 1);
@@ -74,7 +74,7 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 		vect.add (Segment.MULTIPLICITY_STRING);
 		return vect;
 	}
-	
+
 	protected String getData (int col, int row) {
 		col -= 2;
 		Location loci = cur_feat.getLocation ();
@@ -99,7 +99,7 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 			case STRAND:
 				if (!(cur_feat instanceof StrandedFeature))
 					System.out.println ("bad cast");
-				return ((StrandedFeature) cur_feat).getStrand () == 
+				return ((StrandedFeature) cur_feat).getStrand () ==
 					StrandedFeature.NEGATIVE ? COMPLEMENT : FORWARD;
 			case LEFT:
 				value = loci.getMin ();
@@ -114,10 +114,10 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 		}
 		return adjustForContigs (seq_index, value) + "";
 	}
-	
+
 	public boolean badType (Feature feat) {
 		String type = feat.getType ().toLowerCase ();
-		if (type.indexOf ("rna") > -1 || type.indexOf ("gene") > -1 || 
+		if (type.indexOf ("rna") > -1 || type.indexOf ("gene") > -1 ||
 				type.indexOf ("cds") > -1 || type.indexOf ("asap") > -1)
 			return false;
 		else {
@@ -125,7 +125,7 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 			return true;
 		}
 	}
-	
+
 	public void printData () {
 		if (cur_feat != null)
 			super.printData();
@@ -143,13 +143,13 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 			else
 				loci = null;
 		}
-		if (loci != null && shouldPrintSegment (row) && loci.getMin () < 
+		if (loci != null && shouldPrintSegment (row) && loci.getMin () <
 				current.right [seq_index]) {
 			if (cur_feat instanceof StrandedFeature) {
-				cur_percent = MathUtils.percentContained (loci.getMin (), loci.getMax (), 
+				cur_percent = MathUtils.percentContained (loci.getMin (), loci.getMax (),
 						current.left [seq_index], current.right [seq_index]);
 				if (!(cur_percent >= minimum_percent)) {
-					if (loci.getMax () < current.right [seq_index] || 
+					if (loci.getMax () < current.right [seq_index] ||
 							current.nexts [seq_index] == Segment.END) {
 						performComplexIteration ();
 					}
@@ -165,21 +165,21 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 		}
 		return print;
 	}
-	
+
 	protected void performComplexIteration () {
 		cur_feat = iterator.hasNext () ? (Feature) iterator.next () : null;
-		while (cur_feat != null && cur_feat.getLocation ().getMin () < 
+		while (cur_feat != null && cur_feat.getLocation ().getMin () <
 				current.left [seq_index] && current.prevs [seq_index] != Segment.END)
 			current = current.prevs [seq_index];
 	}
-	
+
 	protected boolean shouldPrintSegment (int row) {
 		if (!backbone_instead)
 			return super.shouldPrintRow (row);
 		else
 			return current.multiplicityType () == all_seq_multiplicity ? true : false;
 	}
-	
+
 	protected boolean moreRowsToPrint () {
 		if (cur_feat == null)
 			return false;
@@ -189,14 +189,14 @@ public class IslandGeneFeatureWriter extends IslandFeatureWriter {
 		else
 			return true;
 	}
-	
+
 	public static void printIslandsAsFeatures (SegmentDataProcessor processor) {
 		int count = ((Object []) processor.get (FIRSTS)).length;
 		long all_mult = ((Long) processor.get (ALL_MULTIPLICITY)).longValue ();
 		processor.put (NUM_GENES_PER_MULT, new int [count][(int) all_mult]);
 		processor.put (TOTAL_GENES, new int [count]);
 		for (int i = 0; i < count; i++) {
-			processor.put (SEQUENCE_INDEX, new Integer (i));
+			processor.put (SEQUENCE_INDEX, Integer.valueOf (i));
 			new IslandGeneFeatureWriter (processor);
 			if (i == count - 1 && processor.get (BACKBONE_MASK) == null) {
 				processor.put (BACKBONE_MASK, new Object ());

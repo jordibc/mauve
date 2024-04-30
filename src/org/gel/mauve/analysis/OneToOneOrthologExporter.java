@@ -102,10 +102,10 @@ class LiteWeightFeature implements Comparable
 public class OneToOneOrthologExporter {
 
 	/**
-	 * Takes an Iterator over features and trims it down to an 
+	 * Takes an Iterator over features and trims it down to an
 	 * array of LiteWeightFeatures that contains only those features
 	 * specified by <code>featureType</code>
-	 * 
+	 *
 	 * @param genSrcIdx
 	 * @param i
 	 * @param featureType
@@ -134,7 +134,7 @@ public class OneToOneOrthologExporter {
 			}catch(Exception e){
 				try{
 					ltag = f.getAnnotation().getProperty("gene");
-				}catch(Exception e2){}				
+				}catch(Exception e2){}
 			}
 			if(ltag==null) ltag = new String();
 			if(l > r)
@@ -162,7 +162,7 @@ public class OneToOneOrthologExporter {
 	}
 	private static class Quad {
 		public Quad(long[] l, long[] r)
-		{ 
+		{
 			left = new long[l.length];
 			right = new long[r.length];
 			System.arraycopy(l, 0, left, 0, l.length);
@@ -297,11 +297,11 @@ public class OneToOneOrthologExporter {
 				continue;	// weird.  no overlap.
 			co.length_i = (int)(roffsets[gI] - loffsets[gI]);
 			co.length_j = (int)(roffsets[gJ] - loffsets[gJ]);
-			Object v = hm.get(new Integer(bs));
+			Object v = hm.get(Integer.valueOf(bs));
 			if(v == null)
 				v = new Vector();
 			((Vector)v).add(co);
-			hm.put(new Integer(bs), v);
+			hm.put(Integer.valueOf(bs), v);
 		}
 	}
 
@@ -309,29 +309,29 @@ public class OneToOneOrthologExporter {
 	{
 		// find all annotated orthologs that meet the following criteria:
 		 /**< minimum length of alignment as a fraction of feature */
-		public float min_conserved_length = 0.7f; 
+		public float min_conserved_length = 0.7f;
 		/**< max length of alignment coverage of feature */
-		public float max_conserved_length = 1.0f;  
+		public float max_conserved_length = 1.0f;
 		/**< min nucleotide identity in aligned region */
-		public float min_nucleotide_id = 0.6f;	
+		public float min_nucleotide_id = 0.6f;
 		/**< Max nucleotide identity over aligned region */
-		public float max_nucleotide_id = 1.0f;	
+		public float max_nucleotide_id = 1.0f;
 		/**< Include aligned regions that are not annotated with features (not yet implemented) */
-		public boolean predictUnannotated = false;	
+		public boolean predictUnannotated = false;
 		/**< Type of features for which to find orthologs, e.g. CDS, tRNA, misc_RNA etc. */
-		public String featureType = "CDS";	
+		public String featureType = "CDS";
 		/**< If non-null, specifies a file where an XMFA alignment of features should be stored */
-		public File alignmentOutputFile = null;	
+		public File alignmentOutputFile = null;
 	}
-	
+
 	public static void export( XmfaViewerModel model, BufferedWriter output, OrthologExportParameters oep ) throws IOException
 	{
 		float min_conserved_length = oep.min_conserved_length;
-		float max_conserved_length = oep.max_conserved_length;  
+		float max_conserved_length = oep.max_conserved_length;
 		float min_nucleotide_id = oep.min_nucleotide_id;
 		float max_nucleotide_id = oep.max_nucleotide_id;
 
-		// for each annotated CDS in each genome, identify candidate 
+		// for each annotated CDS in each genome, identify candidate
 		// ortholog CDSes in other genomes
 		Vector allCds = new Vector();
 		for(int gI = 0; gI < model.getSequenceCount(); gI++)
@@ -373,7 +373,7 @@ public class OneToOneOrthologExporter {
 					for( int bbI = 0; bbI < bbs.length; bbI++)
 						addOverlappingCDS(model, cdsj, bbs[bbI], hm, gI, gJ);
 
-					// now for each overlapping CDS that meets the coverage threshold, 
+					// now for each overlapping CDS that meets the coverage threshold,
 					// compute the percent identity
 					Iterator ki = hm.keySet().iterator();
 					while(ki.hasNext())
@@ -387,7 +387,7 @@ public class OneToOneOrthologExporter {
 						Iterator viter = v.iterator();
 						while(viter.hasNext())
 						{
-							
+
 							CdsOverlap co = (CdsOverlap)viter.next();
 							cov_i += co.length_i;
 							cov_j += co.length_j;
@@ -404,7 +404,7 @@ public class OneToOneOrthologExporter {
 						if(cov_j < min_conserved_length * cons_j ||
 								cov_j > max_conserved_length * cons_j)
 							continue;	// not enough covered
-						
+
 						// now compute percent id
 						int cur = cdsi[cI].getLeft();
 						int col = 0;
@@ -433,7 +433,7 @@ public class OneToOneOrthologExporter {
 								cur++;
 								if(col < aln_gJ.length && aln_gJ[col] != '-' && aln_gJ[col] != '\n' && aln_gJ[col] != '\r')
 									tot++;
-								if(col < aln_gJ.length && 
+								if(col < aln_gJ.length &&
 										SimilarityIndex.char_map[(char)aln_gI[col]] == SimilarityIndex.char_map[(char)aln_gJ[col]])
 									id++;	// Use of char_map should fix upper/lowercase issues
 							}
@@ -441,7 +441,7 @@ public class OneToOneOrthologExporter {
 						}
 						if(id >= min_nucleotide_id * tot && id <= max_nucleotide_id * tot)
 						{
-							Integer kkk = new Integer(cI);
+							Integer kkk = Integer.valueOf(cI);
 							Vector vvv = (Vector)orthoPairs[gI][gJ].get(kkk);
 							if(vvv == null) vvv = new Vector();
 							vvv.add(cdsid);
@@ -478,8 +478,8 @@ public class OneToOneOrthologExporter {
 					orthos[gJ].addAll(val);
 					orthoPairs[gI][gJ].remove(key);
 					Stack s = new Stack();
-					s.push(new Integer(gI));
-					s.push(new Integer(gJ));
+					s.push(Integer.valueOf(gI));
+					s.push(Integer.valueOf(gJ));
 					while(!s.isEmpty())
 					{
 						// perform a depth-first-search of the ortho network for transitive orthologs
@@ -506,7 +506,7 @@ public class OneToOneOrthologExporter {
 								int psize = orthos[i].size();
 								orthos[i].addAll(vv);
 								if( orthos[i].size() > psize )
-									s.push(new Integer(i)); // found new orthologs, so continue transitive search
+									s.push(Integer.valueOf(i)); // found new orthologs, so continue transitive search
 							}
 						}
 					}
@@ -514,12 +514,12 @@ public class OneToOneOrthologExporter {
 				}
 			}
 		}
-				
+
 		// write out the ortholog table
 		StringBuilder sb = new StringBuilder();
 		for(int oI = 0; oI < orthologs.size(); oI++)
 		{
-			HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);			
+			HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);
 			boolean first = true;
 			for(int sI = 0; sI < ortho.length; sI++)
 			{
@@ -554,10 +554,10 @@ public class OneToOneOrthologExporter {
 			LiteWeightFeature[] cdsi = (LiteWeightFeature[])allCds.elementAt(sI);
 			found.add( new boolean[cdsi.length] );
 		}
-	
+
 		for(int oI = 0; oI < orthologs.size(); oI++)
 		{
-			HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);			
+			HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);
 			for(int sI = 0; sI < ortho.length; sI++)
 			{
 				Iterator iter = ortho[sI].iterator();
@@ -591,13 +591,13 @@ public class OneToOneOrthologExporter {
 		}
 		output.write(sb.toString());
 		output.flush();
-		
+
 		// if requested to write a file of alignments then do that now
 		if(oep.alignmentOutputFile!=null){
 			BufferedWriter xmfaout = new BufferedWriter(new FileWriter(oep.alignmentOutputFile));
 			for(int oI = 0; oI < orthologs.size(); oI++)
 			{
-				HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);			
+				HashSet[] ortho = (HashSet[])orthologs.elementAt(oI);
 				// for each sequence, construct the maximal coordinate range then select
 				// the maximal alignment column range among all sequences?
 				long maxalnRange = -1;
@@ -665,7 +665,7 @@ public class OneToOneOrthologExporter {
 			xmfaout.flush();
 		}
 	}
-	
+
 	/* reformats a string to be 80 column width */
 	private static String format80(String sequence)
 	{
@@ -679,7 +679,7 @@ public class OneToOneOrthologExporter {
 		}
 		return sb.toString();
 	}
-	
+
 	public static void main(String[] args){
 		OrthologExportParameters oep = new OrthologExportParameters();
 		Options opts = new Options();
@@ -704,7 +704,7 @@ public class OneToOneOrthologExporter {
 				.withDescription("Set the maximum nucleotide identity for homologs, ranges between [0,1], default " + oep.max_nucleotide_id)
 				.create('N')
 				);
-		
+
 		opts.addOption( OptionBuilder
 				.withArgName("minimum conserved length")
 				.hasArg()
@@ -737,7 +737,7 @@ public class OneToOneOrthologExporter {
 				.withDescription("Should alignments of each region be generated?")
 				.create('a')
 				);
-		
+
 		opts.addOption( OptionBuilder
 				.withArgName("output file name")
 				.hasArg()
@@ -752,15 +752,15 @@ public class OneToOneOrthologExporter {
 			line = parser.parse( opts, args );
 		}catch(org.apache.commons.cli.ParseException pe){
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp( 
-					"OneToOneOrthologExporter -f <XMFA alignment input> -o <ortholog output> [other options]", 
+			formatter.printHelp(
+					"OneToOneOrthologExporter -f <XMFA alignment input> -o <ortholog output> [other options]",
 					"The parameters -f and -o are required.  Other parameters include:",
 					opts,
 					"\nExample:\nOneToOneOrthologExporter -f my_aln.xmfa -o my_orthologs -n 0.6 -N 0.8 -a\n \n ");
-			
+
 			throw new RuntimeException("There was an error parsing your command-line options.  Please check them and try again.");
 		}
-		
+
 		String alignment_xmfa = line.getOptionValue('f');
 		String output_file = line.getOptionValue('o');
 		if(line.hasOption('n')){
@@ -785,7 +785,7 @@ public class OneToOneOrthologExporter {
 		if(line.hasOption('a')){
 			oep.alignmentOutputFile = new File(output_file + ".alignments");
 		}
-		
+
 		File xmfa_file = new File(alignment_xmfa);
 		BaseViewerModel bvm = null;
 		try{
@@ -808,14 +808,14 @@ public class OneToOneOrthologExporter {
 			export((XmfaViewerModel)bvm, bw, oep);
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new RuntimeException("Error creating ortholog output.");			
+			throw new RuntimeException("Error creating ortholog output.");
 		}
 	}
 
 	static public class ExportFrame extends JFrame
 	{
 	    private final static DecimalFormat FORMAT = new DecimalFormat("###");
-	    
+
 	    private RearrangementPanel rrpanel;
 	    private JTextField outputFile = new JTextField();
 	    private JFileChooser fc = new JFileChooser();
@@ -829,14 +829,14 @@ public class OneToOneOrthologExporter {
 	    private JCheckBox visibleGenomesBox = new JCheckBox();
 
 	    private OrthologExportParameters oep = new OrthologExportParameters();
-	    
+
 	    XmfaViewerModel model;
 
 	    public ExportFrame(XmfaViewerModel model)
 	    {
 	    	this.model = model;
 	        setSize(400,225);
-	        
+
 	        getContentPane().setLayout(new GridBagLayout());
 	        GridBagConstraints c = new GridBagConstraints();
 
@@ -851,7 +851,7 @@ public class OneToOneOrthologExporter {
 	        c.anchor = GridBagConstraints.EAST;
 	        c.fill = GridBagConstraints.NONE;
 	        getContentPane().add(new JLabel("Features:"), c);
-	        
+
 	        // Format selector.
 	        c.gridx = 1;
 	        c.gridy = 0;
@@ -878,19 +878,19 @@ public class OneToOneOrthologExporter {
 	        JPanel scalePanel = new JPanel();
 	        scalePanel.setLayout(new GridBagLayout());
 	        GridBagConstraints c2 = new GridBagConstraints();
-	        
+
 	        // Min ID
 	        c2.gridx = 0;
 	        c2.gridy = 0;
 	        c2.anchor = GridBagConstraints.EAST;
 	        scalePanel.add(new JLabel("Min:"), c2);
-	        
+
 	        // Min ID box
 	        c2.gridx = 1;
 	        c2.insets = new Insets(0,0,0,4);
 	        c2.anchor = GridBagConstraints.WEST;
 	        scalePanel.add(minIdentityBox,c2);
-	        minIdentityBox.setValue(new Long(Math.round((oep.min_nucleotide_id*100.0))));
+	        minIdentityBox.setValue(Long.valueOf(Math.round((oep.min_nucleotide_id*100.0))));
 	        minIdentityBox.setColumns(3);
 
 	        // Max ID label
@@ -903,7 +903,7 @@ public class OneToOneOrthologExporter {
 	        c2.gridx = 3;
 	        c2.anchor = GridBagConstraints.WEST;
 	        scalePanel.add(maxIdentityBox,c2);
-	        maxIdentityBox.setValue(new Long(Math.round((oep.max_nucleotide_id*100.0))));
+	        maxIdentityBox.setValue(Long.valueOf(Math.round((oep.max_nucleotide_id*100.0))));
 	        maxIdentityBox.setColumns(3);
 
 	        JPanel scalePanel2 = new JPanel();
@@ -915,13 +915,13 @@ public class OneToOneOrthologExporter {
 	        c2.gridy = 0;
 	        c2.anchor = GridBagConstraints.EAST;
 	        scalePanel2.add(new JLabel("Min:"), c2);
-	        
+
 	        // Min Coverage box
 	        c2.gridx = 1;
 	        c2.insets = new Insets(0,0,0,4);
 	        c2.anchor = GridBagConstraints.WEST;
 	        scalePanel2.add(minCoverageBox,c2);
-	        minCoverageBox.setValue(new Long(Math.round((oep.min_conserved_length*100.0))));
+	        minCoverageBox.setValue(Long.valueOf(Math.round((oep.min_conserved_length*100.0))));
 	        minCoverageBox.setColumns(3);
 
 	        // Max Coverage label
@@ -934,7 +934,7 @@ public class OneToOneOrthologExporter {
 	        c2.gridx = 3;
 	        c2.anchor = GridBagConstraints.WEST;
 	        scalePanel2.add(maxCoverageBox,c2);
-	        maxCoverageBox.setValue(new Long(Math.round((oep.max_conserved_length*100.0))));
+	        maxCoverageBox.setValue(Long.valueOf(Math.round((oep.max_conserved_length*100.0))));
 	        maxCoverageBox.setColumns(3);
 
 	        // Adding scale panel.
@@ -944,7 +944,7 @@ public class OneToOneOrthologExporter {
 	        c.anchor = GridBagConstraints.WEST;
 	        getContentPane().add(scalePanel, c);
 
-	        
+
 	        // Adding coverage label.
 	        c.gridx = 0;
 	        c.gridy = 2;
@@ -977,8 +977,8 @@ public class OneToOneOrthologExporter {
 	        visibleGenomesBox.setText("Visible genomes only");
 	        visibleGenomesBox.setToolTipText("Export orthologs only for non-collapsed genomes");
 	        visibleGenomesBox.setSelected(false);
-	        getContentPane().add(visibleGenomesBox, c);	        
-*/        
+	        getContentPane().add(visibleGenomesBox, c);
+*/
 	        // File label.
 	        c.gridx = 0;
 	        c.gridy = 5;
@@ -987,7 +987,7 @@ public class OneToOneOrthologExporter {
 	        c.anchor = GridBagConstraints.SOUTHEAST;
 	        c.weighty = 0;
 	        getContentPane().add(new JLabel("Output file:"), c);
-	        
+
 	        // File text box
 	        c.gridx = 1;
 	        c.gridy = 5;
@@ -997,7 +997,7 @@ public class OneToOneOrthologExporter {
 	        c.anchor = GridBagConstraints.SOUTHWEST;
 	        c.weightx = 1;
 	        getContentPane().add(outputFile, c);
-	        
+
 	        // File browse button.
 	        JButton fileButton = new JButton("Browse...");
 	        fileButton.addActionListener(new ActionListener()
@@ -1021,35 +1021,35 @@ public class OneToOneOrthologExporter {
 	        c.anchor = GridBagConstraints.SOUTHWEST;
 	        c.weightx = 0;
 	        getContentPane().add(fileButton, c);
-	        
+
 	        // Export button.
 	        JPanel buttonPanel = new JPanel();
-	        
+
 	        JButton exportButton = new JButton("Export");
 	        exportButton.addActionListener(new ActionListener()
 	                {
-	        
+
 	                    public void actionPerformed(ActionEvent e)
 	                    {
 	                        doExport();
 	                    }
-	            
+
 	                }
 	        );
-	        
+
 	        buttonPanel.add(exportButton);
-	        
+
 	        JButton cancelButton = new JButton("Cancel");
 	        cancelButton.addActionListener(new ActionListener()
 	                {
-	        
+
 	                    public void actionPerformed(ActionEvent e)
 	                    {
 	                        setVisible(false);
 	                    }
 	                }
 	        );
-	        
+
 	        buttonPanel.add(cancelButton);
 
 	        c.gridx = 0;
@@ -1062,7 +1062,7 @@ public class OneToOneOrthologExporter {
 	        JLabel orthoLab = new JLabel("<html>Note: ortholog export may<br>be very time-consuming");
 	        orthoLab.setForeground(Color.gray);
 	        getContentPane().add(orthoLab, c);
-	        
+
 	        c.gridx = 2;
 	        c.gridy = 6;
 	        c.gridwidth = 2;
@@ -1073,7 +1073,7 @@ public class OneToOneOrthologExporter {
 	        getContentPane().add(buttonPanel, c);
 	        this.setVisible(true);
 	    }
-	    
+
 	    private void doExport()
 	    {
 	    	File f = new File(outputFile.getText());

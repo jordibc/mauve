@@ -23,20 +23,20 @@ import javax.swing.event.ChangeListener;
 import org.gel.mauve.MyConsole;
 
 public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeListener {
-	
-	
-	/* 
+
+
+	/*
 	 * These variables should be private. Before they had no modifier, which
 	 * means they were accessible to to everything else in this package.
-	 * There is no reason for these members to be directly accessible to 
+	 * There is no reason for these members to be directly accessible to
 	 * the outside world. If you need to access them, make setters
-	 * and getters -- don't be lazy! 
+	 * and getters -- don't be lazy!
 	 */
     // member declarations
 	protected Dimension d;
 	protected JCheckBox refineCheckBox = new JCheckBox();
 	protected JCheckBox seedFamiliesCheckBox = new JCheckBox();
-    
+
 	protected JCheckBox sumOfPairsCheckBox = new JCheckBox();
 	protected JSlider breakpointWeightScaleSlider = new JSlider();
 	protected JLabel breakpointWeightScaleLabel = new JLabel();
@@ -45,7 +45,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
 	protected JLabel conservationWeightScaleLabel = new JLabel();
 	protected JTextField conservationWeightScaleText = new JTextField(5);
 
-    
+
 	protected JPanel scorePanel = new JPanel();
 	protected JComboBox matrixChoice = new JComboBox(new String[] {"HOXD (default)", "Custom"});
 	protected JLabel matrixChoiceLabel = new JLabel();
@@ -65,7 +65,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
 	protected JLabel gapOpenLabel = new JLabel();
 	protected JTextField gapExtendText = new JTextField();
 	protected JLabel gapExtendLabel = new JLabel();
-    
+
     public ProgressiveMauveAlignFrame(Mauve mauve)
     {
     	super(mauve);
@@ -78,7 +78,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
     public void initComponents()
     {
     	super.initComponents();
-    	
+
         // the following code sets the frame's initial state
         defaultSeedCheckBox.setLocation(new java.awt.Point(10, 10));
         determineLCBsCheckBox.setLocation(new java.awt.Point(10, 50));
@@ -110,7 +110,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         matrixChoiceLabel.setLocation(10, 15);
         matrixChoiceLabel.setVisible(true);
     	scorePanel.add(matrixChoiceLabel);
-        
+
         // layout substitution scoring matrix
         int score_matrix_left = 15;
         int score_matrix_top = 35;
@@ -247,7 +247,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         breakpointWeightScaleText.setHorizontalAlignment(JTextField.RIGHT);
         breakpointWeightScaleText.setText("0.500");
         breakpointWeightScaleText.setLocation(new java.awt.Point(200, 175));
-        
+
 
         conservationWeightScaleLabel.setSize(new java.awt.Dimension(215, 20));
         conservationWeightScaleLabel.setVisible(true);
@@ -335,14 +335,14 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         if (e.getSource() == breakpointWeightScaleSlider)
         {
             double w = (double)breakpointWeightScaleSlider.getValue();
-            Double d = new Double(w/100);
+            Double d = Double.valueOf(w/100);
             breakpointWeightScaleText.setText(d.toString());
         }
         if (e.getSource() == breakpointWeightScaleText)
         {
         }
     }
-    
+
     protected String[] makeAlignerCommand()
     {
         Vector cmd_vec = new Vector();
@@ -357,7 +357,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         {
         	cmd_vec.addElement("--seed-family");
         }
-        	
+
         if (getSeedWeight() > 0)
         {
             cur_cmd = "--seed-weight=";
@@ -372,7 +372,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         cmd_vec.addElement(cur_cmd);
 
         read_filename = output_file;
-        
+
         detect_lcbs = isLCBSearchEnabled();
         if (detect_lcbs)
         {
@@ -413,7 +413,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
             cur_cmd = "--mums";
             cmd_vec.addElement(cur_cmd);
         }
-        
+
         if(!(getScoreMatrixName().indexOf("default") > 0))
         {
         	File mat_file = null;
@@ -442,7 +442,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
         				for( int sI = 0; sI < 6 - mat[i][j].length(); ++sI)
         					space_str += " ";
     					outtie.write(space_str);
-        				
+
     					// write the score value
         				outtie.write(mat[i][j]);
         			}
@@ -475,7 +475,7 @@ public class ProgressiveMauveAlignFrame extends AlignFrame implements ChangeList
 
         String[] mauve_cmd = new String[cmd_vec.size()];
         mauve_cmd = (String[]) (cmd_vec.toArray(mauve_cmd));
-        
+
         return mauve_cmd;
     }
 

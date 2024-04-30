@@ -66,7 +66,7 @@ public class XMFAAlignment implements Serializable {
 	/**
 	 * Sets the file used as backing store for this alignment Call this method
 	 * to set the file after reading a serialized XMFAAlignment
-	 * 
+	 *
 	 * @param f
 	 *            The xmfa file corresponding to this alignment
 	 */
@@ -211,7 +211,7 @@ public class XMFAAlignment implements Serializable {
 						if (seq_num_strtok.hasMoreTokens ()) {
 							seq_num = Integer.parseInt (seq_num_strtok
 									.nextToken ()) - 1;
-							seq_nums.addElement (new Integer (seq_num));
+							seq_nums.addElement (Integer.valueOf (seq_num));
 						}
 						String tmp_str = cur_line.substring (colon_pos + 1);
 						int dash_pos = tmp_str.indexOf ('-');
@@ -225,13 +225,13 @@ public class XMFAAlignment implements Serializable {
 						boolean cur_reverse = true;
 						// parse strand -- if + isn't found then assume - strand
 						if (tmp_str.indexOf ('+', space_pos + 1) < 0)
-							reverse.addElement (new Boolean (true));
+							reverse.addElement (Boolean.valueOf (true));
 						else {
-							reverse.addElement (new Boolean (false));
+							reverse.addElement (Boolean.valueOf (false));
 							cur_reverse = false;
 						}
-						lend.addElement (new Long (left));
-						rend.addElement (new Long (right));
+						lend.addElement (Long.valueOf (left));
+						rend.addElement (Long.valueOf (right));
 
 						// if we haven't yet completed the first alignment entry
 						// try to parse the sequence name
@@ -258,8 +258,8 @@ public class XMFAAlignment implements Serializable {
 
 						gist = new GISTree (ts);
 						gis_tree_tmp.addElement (gist);
-						gist_seqnums.addElement (new Integer (seq_num));
-						gist_ivnums.addElement (new Integer (tmp_ivs.size ()));
+						gist_seqnums.addElement (Integer.valueOf (seq_num));
+						gist_ivnums.addElement (Integer.valueOf (tmp_ivs.size ()));
 					}
 					break;
 
@@ -297,7 +297,7 @@ public class XMFAAlignment implements Serializable {
 					// beginning of
 					// the entry
 					if (fk == null && gk == null) {
-						f_offset.addElement (new Long (cur_base + bufI));
+						f_offset.addElement (Long.valueOf (cur_base + bufI));
 					}
 
 					// it's all sequence data
@@ -351,7 +351,7 @@ public class XMFAAlignment implements Serializable {
 					gk = null;
 
 					// sequence ends here
-					f_end_offset.addElement (new Long (cur_base + bufI));
+					f_end_offset.addElement (Long.valueOf (cur_base + bufI));
 
 					if (buf[bufI] == '>') {
 						section_start = bufI;
@@ -482,7 +482,7 @@ public class XMFAAlignment implements Serializable {
 	/**
 	 * Read a comment line from an LCB The LCB comment line is the terminator
 	 * line that begins with =
-	 * 
+	 *
 	 * @param lcbI
 	 *            The LCB to read a comment line from
 	 * @return The comment line
@@ -493,7 +493,7 @@ public class XMFAAlignment implements Serializable {
 
 	/**
 	 * Read the source file name of a given sequence
-	 * 
+	 *
 	 * @param seqI
 	 *            The sequence index (starting at 0)
 	 * @return The source file name
@@ -506,8 +506,8 @@ public class XMFAAlignment implements Serializable {
 	 * Extracts columns from the sequence alignment containing the specified
 	 * range of the specified sequence. The returned alignment columns will
 	 * contain gaps and any whitespace in the XMFA source (e.g. newlines)
-	 * 
-	 * 
+	 *
+	 *
 	 * @param g
 	 * 			the genome whose sequence is of interest
 	 * @param lend
@@ -516,7 +516,7 @@ public class XMFAAlignment implements Serializable {
 	 *            The right end coordinate of the range to be extracted
 	 * @return A set of alignment columns stored as an array of byte arrays
 	 *         indexed as [sequence][column]
-	 *         
+	 *
 	 */
 	public byte[][] getRange (Genome g, long lend, long rend) {
 		long cur_offset = lend;
@@ -583,13 +583,13 @@ public class XMFAAlignment implements Serializable {
 
 	/**
 	 * reverse entries in a byte array
-	 * 
+	 *
 	 */
 	void reverse (byte [] byte_buf) {
 		for (int byteI = 0; byteI < byte_buf.length / 2; byteI++) {
 			byte tmp = (byte) SnpExporter.revtab[byte_buf[byteI]];
 			byte_buf[byteI] = (byte) SnpExporter.revtab[ byte_buf[byte_buf.length - byteI - 1] ];
-			byte_buf[byte_buf.length - byteI - 1] = tmp;			
+			byte_buf[byte_buf.length - byteI - 1] = tmp;
 		}
 		if(byte_buf.length%2==1){
 			byte_buf[byte_buf.length/2] = (byte) SnpExporter.revtab[ byte_buf[byte_buf.length/2] ];
@@ -619,7 +619,7 @@ public class XMFAAlignment implements Serializable {
 	/**
 	 * Read sequence data (and any gap characters) from a file, filtering
 	 * newlines column index starts at 0!!
-	 * 
+	 *
 	 * @param ivI
 	 *            The interval to read
 	 * @param seqI
@@ -772,7 +772,7 @@ public class XMFAAlignment implements Serializable {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * converts a global sequence coordinate to an LCB local coordinate, taking
 	 * rev. comp. into account
@@ -782,8 +782,8 @@ public class XMFAAlignment implements Serializable {
 		return revCompify (offset, g, ivI);
 	}
 
-	// 
-	
+	//
+
 	/**
 	 *  converts an LCB local coordinate to a global sequence coordinate, taking
 	 *  rev. comp. into account
@@ -799,9 +799,9 @@ public class XMFAAlignment implements Serializable {
 	/**
 	 * Identifies the LCB and the column within the LCB of a given sequence
 	 * position
-	 * 
+	 *
 	 * @return an array of 2 longs. The first being the LCB by index,
-	 *         and the second the column 
+	 *         and the second the column
 	 */
 	public long [] getLCBAndColumn (Genome g, long position) {
 		// determine the LCB
@@ -820,7 +820,7 @@ public class XMFAAlignment implements Serializable {
 	/**
 	 * Returns the sequence coordinates aligned in a given column, ordered
 	 * according to source index.
-	 * 
+	 *
 	 * @param seq_offsets
 	 *            The sequence coordinates (output)
 	 * @param gap
@@ -842,7 +842,7 @@ public class XMFAAlignment implements Serializable {
 	}
 	/**
 	 * Returns a sequence coordinate aligned in a given column for a specific genome
-	 * 
+	 *
 	 * @return 	The sequence coordinate
 	 */
 	public long getCoordinate (XmfaViewerModel model, Genome g, int lcb,
@@ -855,7 +855,7 @@ public class XMFAAlignment implements Serializable {
 		seq_offset = LCBToGlobal (seq_offset, g, lcb);
 		return seq_offset;
 	}
-	
+
 	/**
 	 * Returns the length in alignment columns of a particular LCB
 	 * @param lcbId	The index of the LCB in question

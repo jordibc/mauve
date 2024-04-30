@@ -13,9 +13,9 @@ import org.gel.mauve.MauveHelperFunctions;
 import org.gel.mauve.gui.sequence.FlatFileFeatureConstants;
 import org.gel.mauve.summary.output.AbstractTabbedDataWriter;
 
-public class ChangedFeatureWriter extends AbstractTabbedDataWriter 
+public class ChangedFeatureWriter extends AbstractTabbedDataWriter
 		implements FlatFileFeatureConstants {
-	
+
 	protected Iterator feats;
 	protected Feature feature;
 	protected Genome genome;
@@ -44,7 +44,7 @@ public class ChangedFeatureWriter extends AbstractTabbedDataWriter
 		printData ();
 		doneWritingFile ();
 	}
-	
+
 	protected void initSubClassParticulars (Hashtable args) {
 		inverters = (Hashtable) args.get (ContigFeatureWriter.REVERSES);
 		super.initSubClassParticulars(args);
@@ -55,7 +55,7 @@ public class ChangedFeatureWriter extends AbstractTabbedDataWriter
 		boolean changed = inverters.contains (chrom);
 		boolean rev = changed;
 		if (feature.getAnnotation ().containsProperty (REVERSED)) {
-			rev = new Boolean ((String) feature.getAnnotation ().getProperty (
+			rev = Boolean.valueOf ((String) feature.getAnnotation ().getProperty (
 					REVERSED)).booleanValue ();
 			if (changed)
 				rev = !rev;
@@ -76,7 +76,7 @@ public class ChangedFeatureWriter extends AbstractTabbedDataWriter
 				break;
 			case RIGHT_IND:
 			case OLD_L_IND:
-				ret = feature.getLocation ().getMin (); 
+				ret = feature.getLocation ().getMin ();
 				break;
 			case CHANGED_IND:
 				return rev + "";

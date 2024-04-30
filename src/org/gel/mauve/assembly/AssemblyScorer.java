@@ -44,31 +44,31 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	private File outputDir;
 	private boolean batch;
 	private String basename;
-	private XmfaViewerModel model; 
+	private XmfaViewerModel model;
 	private int[][] subs;
 	private SNP[] snps;
 	private Gap[] refGaps;
-	private Gap[] assGaps; 
+	private Gap[] assGaps;
 	private Chromosome[] extraCtgs;
 	private Chromosome[] missingChroms;
 	private BrokenCDS[] brokenCDS;
 	private CDSErrorExporter cdsEE;
 	private DCJ dcj;
 	private boolean getBrokenCDS = true;
-	
+
 	private int numSharedBnds;
-	
+
 	private int numInterLcbBnds;
-	
+
 	/** extra adjacencies */
 	private Vector<Adjacency> typeI;
-	
+
 	/** missing adjacencies */
 	private Vector<Adjacency> typeII;
 	private Vector<Chromosome> invCtgs;
 	private Map<Chromosome,Integer> misAsm;
 	private int numMisAssemblies;
-	
+
 	private int miscalled;
 	private int uncalled;
 
@@ -82,36 +82,36 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	private static int C = 1;
 	private static int T = 2;
 	private static int G = 3;
-	
+
 
 	public AssemblyScorer(XmfaViewerModel model){
 		this.model = model;
 		loadInfo();
 	}
-	
+
 	public AssemblyScorer(File alnmtFile, File outDir) {
 		this.alnmtFile = alnmtFile;
 		this.outputDir = outDir;
 		basename = alnmtFile.getName();
 		batch = false;
 	}
-	
+
 	public AssemblyScorer(File alnmtFile, File outDir, String basename) {
 		this(alnmtFile,outDir);
 		this.basename = basename;
 	}
-	
+
 	public AssemblyScorer(ContigOrderer co, File outDir) {
 		this.co = co;
 		this.outputDir = outDir;
 		batch = false;
 	}
-	
+
 	public AssemblyScorer(ContigOrderer co, File outDir, String basename) {
 		this(co,outDir);
 		this.basename = basename;
 	}
-	
+
 	public void completeAlignment(int retcode){
 		if (retcode == 0) {
 			if (co != null){
@@ -123,7 +123,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			try {
 				this.model = new XmfaViewerModel(alnmtFile,null);
 			} catch (IOException e) {
-				System.err.println("Couldn't load alignment file " 
+				System.err.println("Couldn't load alignment file "
 									+ alnmtFile.getAbsolutePath());
 				e.printStackTrace();
 			}
@@ -131,13 +131,13 @@ public class AssemblyScorer implements AlignmentProcessListener {
 				loadInfo();
 				printInfo(this, outputDir, basename, batch);
 			}
-			
-		} else { 
+
+		} else {
 			System.err.println("Alignment failed with error code "+ retcode);
 		}
-			
+
 	}
-	
+
 	private void computeAdjacencyErrors(){
 		Adjacency[] ref = dcj.getAdjacencyGraph().getGenomeA();
 		Adjacency[] ass = dcj.getAdjacencyGraph().getGenomeB();
@@ -152,13 +152,13 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			private String min(String s1, String s2){
 				if (s1.compareTo(s2) > 0)
 					return s2;
-				else 
+				else
 					return s1;
 			}
 			private String max(String s1, String s2){
 				if (s1.compareTo(s2) > 0)
 					return s1;
-				else 
+				else
 					return s2;
 			}
 		};
@@ -166,89 +166,89 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		typeI = new Vector<Adjacency>();
 		// false negatives : adjacencies in reference that aren't in the assembly
 		typeII = new Vector<Adjacency>();
-		
+
 		TreeSet<Adjacency> refSet = new TreeSet<Adjacency>(comp);
 		for (Adjacency a: ref) {
 			refSet.add(a);
 		}
-		
+
 	//	System.err.println("\nnum assembly adjacencies: " + ass.length);
-		Vector<Adjacency> intersection = new Vector<Adjacency>(); 
+		Vector<Adjacency> intersection = new Vector<Adjacency>();
 		for (Adjacency a: ass){
-			if (!refSet.contains(a)) 
+			if (!refSet.contains(a))
 				typeI.add(a);
 			else
 				intersection.add(a);
 		}
 
 	//	System.err.println("num typeI errors: " + typeI.size());
-		
+
 		TreeSet<Adjacency> assSet = new TreeSet<Adjacency>(comp);
 		for (Adjacency a: ass) { assSet.add(a);}
-		
+
 	//	System.err.println("num ref adjacencies: " + ref.length);
-		
+
 		for (Adjacency a: ref) {
 			if (!assSet.contains(a))
 				typeII.add(a);
 		}
 	//	System.err.println("num typeII errors: " + typeII.size());
-		
+
 	/*	Iterator<Adjacency> it = intersection.iterator();
 		while(it.hasNext()){
 			System.err.println(it.next().toString());
 		}*/
 	}
-	
+
 	/**
 	 * computes info. sorts gaps and snps
 	 */
 	private synchronized void loadInfo(){
 		model.setReference(model.getGenomeBySourceIndex(0));
-		
+
 		System.out.print("Counting shared bounds between contigs/chromosomes and LCBs...");
 		numSharedBnds = PermutationExporter.getSharedBoundaryCount(model);
 		System.out.print("done!\n");
-		
+
 		System.out.print("Counting interLCB contig/chromosome boundaries...");
 		numInterLcbBnds = PermutationExporter.countInterBlockBounds(model);
 		System.out.print("done!\n");
-		
+
 		System.out.print("Computing signed permutations...");
-		String[] perms = PermutationExporter.getPermStrings(model, true); 
+		String[] perms = PermutationExporter.getPermStrings(model, true);
 		System.out.print("done!\n");
-		
+
 		//System.out.println("Permutations: ");
 		//System.out.println(perms[0]);
 		//System.out.println(perms[1]);
-		
+
 		System.out.print("Performing DCJ rearrangement analysis...");
 		this.dcj = new DCJ(perms[0], perms[1]);
 		System.out.print("done!\n");
-		
+
 		System.out.print("Computing adjacency errors...");
 		computeAdjacencyErrors();
 		System.out.print("done!\n");
-		
+
 		System.out.print("Getting SNPs...");
 		this.snps = SnpExporter.getSNPs(model);
 		System.out.print("done!\n");
-		
+
 		System.out.print("Counting base substitutions...");
 		this.subs = AssemblyScorer.countSubstitutions(snps);
 		summarizeBaseCalls();
 		System.out.print("done!\n");
-		
+
 		System.out.print("Counting gaps...");
 		Gap[][] tmp = SnpExporter.getGaps(model);
 		System.out.print("done!\n");
-		
+
 		System.out.print("Counting extra contigs...");
 		Chromosome[][] unique = SnpExporter.getUniqueChromosomes(model);
 		System.out.print("done!\n");
-		
+
 		computeContigSizeStats();
-		
+
 		refGaps = tmp[0];
 		assGaps = tmp[1];
 		Arrays.sort(assGaps);
@@ -260,7 +260,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			computeBrokenCDS();
 		}
 	}
-	
+
 	private void computeContigSizeStats(){
 		List<Chromosome> chromos = model.getGenomeBySourceIndex(1).getChromosomes();
 		long[] sizer = new long[chromos.size()];
@@ -270,7 +270,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			sizer[i++] = c.getLength();
 			sum += c.getLength();
 		}
-		
+
 		Arrays.sort(sizer);
 		minContigLength = sizer[0];
 		maxContigLength = sizer[sizer.length-1];
@@ -285,8 +285,8 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		contigN90 = sizer[i];
 	}
-	
-	
+
+
 	public void summarizeBaseCalls(){
 		int subsum = 0;
 		for(int i=0; i<subs.length;i++){
@@ -316,10 +316,10 @@ public class AssemblyScorer implements AlignmentProcessListener {
 				System.err.println("\n\nfailed to compute broken CDS. Reason given below");
 				System.err.println(e.getMessage());
 				e.printStackTrace();
-			} 
+			}
 		}
 	}
-	
+
 	public int getMiscalled() {
 		return miscalled;
 	}
@@ -343,91 +343,91 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	public DCJ getDCJ(){
 		return dcj;
 	}
-	
+
 	public Gap[] getReferenceGaps(){
 		return refGaps;
 	}
-	
+
 	public Gap[] getAssemblyGaps(){
 		return assGaps;
 	}
-	
+
 	public Chromosome[] getExtraContigs(){
 		return extraCtgs;
 	}
-	
+
 	public Chromosome[] getMissingChromosomes(){
 		return missingChroms;
 	}
-	
+
 	public SNP[] getSNPs(){
 		return snps;
 	}
-	
+
 	public int[][] getSubs(){
 		return subs;
 	}
-	
+
 	public boolean hasBrokenCDS(){
-		if (brokenCDS == null) 
+		if (brokenCDS == null)
 			return false;
 		else {
 			return brokenCDS.length > 0;
 		}
 	}
-	
+
 	public BrokenCDS[] getBrokenCDS(){
 		return brokenCDS;
 	}
-	
+
 	public int numBrokenCDS(){
 		return cdsEE.numBrokenCDS();
 	}
-	
+
 	public int numCompleteCDS(){
 		return cdsEE.numCompleteCDS();
 	}
-	
+
 	public int getSCJdist(){
 		return dcj.scjDistance();
 	}
-	
+
 	public int getDCJdist(){
 		return dcj.dcjDistance();
 	}
-	
+
 	public int getBPdist(){
 		return dcj.bpDistance();
 	}
-	
+
 	public int numBlocks(){
 		return dcj.numBlocks();
 	}
 
 	public double typeIadjErr(){
-		return ((double) typeI.size()) / 
+		return ((double) typeI.size()) /
 			((double) dcj.getAdjacencyGraph()
 						 .getGenomeB().length);
 	}
-	
+
 	public double typeIIadjErr(){
 		return ((double) typeII.size()) /
 			((double) dcj.getAdjacencyGraph()
 						 .getGenomeA().length);
 	}
-	
+
 	public Map<Chromosome, Integer> getMisAssemblies(){
 		return misAsm;
 	}
-	
+
 	public Chromosome[] getInverted(){
 		return invCtgs.toArray(new Chromosome[invCtgs.size()]);
 	}
-	
+
 	public int numLCBs(){
 		return (int) model.getLcbCount();
 	}
-	
+
 	public int numContigs(){
 		return model.getGenomeBySourceIndex(1).getChromosomes().size();
 	}
@@ -435,16 +435,16 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	public long numReplicons(){
 		return model.getGenomeBySourceIndex(0).getChromosomes().size();
 	}
-	
-	
+
+
 	public long numBasesAssembly(){
 		return model.getGenomeBySourceIndex(1).getLength();
 	}
-	
+
 	public long numBasesReference(){
 		return model.getGenomeBySourceIndex(0).getLength();
 	}
-	
+
 	public double percentMissedBases(){
 		double totalBases = model.getGenomeBySourceIndex(0).getLength();
 		double missedBases = 0;
@@ -453,7 +453,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		return missedBases/totalBases;
 	}
-	
+
 	public long totalMissedBases(){
 		long missedBases = 0;
 		for(int i = 0; i < assGaps.length; i++){
@@ -461,7 +461,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		return missedBases;
 	}
-	
+
 	public long getMaxContigLength() {
 		return maxContigLength;
 	}
@@ -479,7 +479,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return numExtraBases/totalNumBases
 	 */
 	public double percentExtraBases(){
@@ -490,7 +490,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		return extraBases/totalBases;
 	}
-	
+
 	public long totalExtraBases(){
 		long extraBases = 0;
 		for (int i = 0; i < refGaps.length; i++){
@@ -498,16 +498,16 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		return extraBases;
 	}
-	
+
 	public int getSharedBoundaryCount(){
 		return numSharedBnds;
 	}
-	
+
 	public int getInterLcbBoundaryCount(){
 		return numInterLcbBnds;
 	}
-	
-	/* 
+
+	/*
 	 * calculate GC content of missing bases
 	 * in stretches up to 100nt.
 	 * Useful for determining if we're suffering GC bias
@@ -545,13 +545,13 @@ public class AssemblyScorer implements AlignmentProcessListener {
 				double gc = countGC(rawseq);
 				if(!Double.isNaN(gc))
 				{
-					bw.write((new Double(gc)).toString());
+					bw.write((Double.valueOf(gc)).toString());
 					bw.write("\n");
 				}
 				int upperbound = (int)asmScore.getModel().getGenomeBySourceIndex(gaps[i].getGenomeSrcIdx()).getLength() - (int)glen - 10000;
 				upperbound = upperbound < 0 ? 0 : upperbound;
 				int rpos = randy.nextInt(upperbound);
-	
+
 				// evil code copy!!
 				left = asmScore.getModel().getLCBAndColumn(gaps[i].getGenomeSrcIdx(), rpos-glen/2);
 				right = asmScore.getModel().getLCBAndColumn(gaps[i].getGenomeSrcIdx(), rpos+glen/2);
@@ -564,7 +564,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 				gc = countGC(rawseq);
 				if(!Double.isNaN(gc))
 				{
-					bw3.write((new Double(gc)).toString());
+					bw3.write((Double.valueOf(gc)).toString());
 					bw3.write("\n");
 				}
 			}
@@ -579,7 +579,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		double gc = 0;
 		double counts = 0;
 		for(int j=0; j<rawseq.length; j++){
-			if(rawseq[j]== 'G' || rawseq[j]== 'C' || 
+			if(rawseq[j]== 'G' || rawseq[j]== 'C' ||
 					rawseq[j]== 'g' || rawseq[j]== 'c')
 				gc++;
 			else if(rawseq[j]=='-' || rawseq[j]=='\n')
@@ -606,16 +606,16 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	}
 
 	/**
-	 * Returns a 4x4 matrix of counts of substitution types between 
+	 * Returns a 4x4 matrix of counts of substitution types between
 	 * genome <code>src_i</code> and <code>src_j</code>
-	 * 
+	 *
 	 * <pre>
 	 * <code>
-	 *      A  C  T  G 
-	 *    A -          
-	 *    C    -       
-	 *    T       -    
-	 *    G          - 
+	 *      A  C  T  G
+	 *    A -
+	 *    C    -
+	 *    T       -
+	 *    G          -
 	 * </code>
 	 * </pre>
 	 * @param snps
@@ -623,10 +623,10 @@ public class AssemblyScorer implements AlignmentProcessListener {
 	 */
 	public static int[][] countSubstitutions(SNP[] snps){
 		int[][] subs = new int[4][4];
-		for (int k = 0; k < snps.length; k++){ 
+		for (int k = 0; k < snps.length; k++){
 			char c_0 = snps[k].getChar(0);
 			char c_1 = snps[k].getChar(1);
-			
+
 			try {
 				if (c_0 != c_1)
 					subs[getBaseIdx(c_0)][getBaseIdx(c_1)]++;
@@ -639,7 +639,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 
 	static int getBaseIdx(char c) throws IllegalArgumentException {
 		switch(c){
-		  case 'a': return AssemblyScorer.A; 
+		  case 'a': return AssemblyScorer.A;
 		  case 'A': return AssemblyScorer.A;
 		  case 'c': return AssemblyScorer.C;
 		  case 'C': return AssemblyScorer.C;
@@ -705,19 +705,19 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			chromOut = new PrintStream(chromFile);
 		} catch (IOException e){
 			e.printStackTrace();
-			System.exit(-1);    
+			System.exit(-1);
 		}
 		printInfo(sa,miscallOut,uncallOut,gapOut);
 		printBlockInfo(blockOut,sa.model);
 		if (batch){
-		    sumOut.print(ScoreAssembly.getSumText(sa, false, true));	
+		    sumOut.print(ScoreAssembly.getSumText(sa, false, true));
 		}else {
 		    sumOut.print(ScoreAssembly.getSumText(sa, true, true));
 		}
 		AssemblyScorer.calculateMissingGC(sa, outDir, baseName);
 		AssemblyScorer.printMissingRegions(sa, outDir, baseName);
 		chromOut.print(getReferenceChromosomes(sa));
-		
+
 		blockOut.close();
 		gapOut.close();
 		miscallOut.close();
@@ -738,7 +738,7 @@ public class AssemblyScorer implements AlignmentProcessListener {
 		}
 		return sb.toString();
 	}
-	
+
 	private static void printBlockInfo(PrintStream out, XmfaViewerModel model){
 		out.println("BlockId\tBlockLength\tRefLeft\tRefRight\tAsmLeft\tAsmRight");
 		LCB[] lcbList = model.getSplitLcbList();
@@ -765,12 +765,12 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			out.println();
 		}
 	}
-	
+
 	/**
-	 * Prints the SNP and gap data from this AssemblyScorer object out to the 
-	 * respective <code>PrintStream</code>s. 
+	 * Prints the SNP and gap data from this AssemblyScorer object out to the
+	 * respective <code>PrintStream</code>s.
 	 * <br>
-	 * NOTE: <code>snpOut</code> and <code>gapOut</code> 
+	 * NOTE: <code>snpOut</code> and <code>gapOut</code>
 	 * can take null values
 	 * </br>
 	 * @param sa the AssemblyScorer to print info for
@@ -801,10 +801,10 @@ public class AssemblyScorer implements AlignmentProcessListener {
 			for (int i = 0; i < sa.refGaps.length; i++)
 				sb.append(sa.refGaps[i].toString("reference")+"\n");
 			for (int i = 0; i < sa.assGaps.length; i++)
-				sb.append(sa.assGaps[i].toString("assembly")+"\n");			
+				sb.append(sa.assGaps[i].toString("assembly")+"\n");
 			gapOut.print(sb.toString());
 			gapOut.flush();
 		}
-		
+
 	}
 }

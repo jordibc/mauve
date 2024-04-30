@@ -49,7 +49,7 @@ public class LCBlist {
         for (seqI = 0; seqI < model.getSequenceCount(); seqI++)
         {
             Genome g = model.getGenomeBySourceIndex(seqI);
-            
+
             LCBLeftComparator llc = new LCBLeftComparator(g);
             Arrays.sort(lcb_list, llc);
             int first = 0;
@@ -92,7 +92,7 @@ public class LCBlist {
 	 * @param change_points -
 	 *            minimum weights that, if applied, cause a change in the list
 	 *            of LCBs.
-	 * 
+	 *
 	 * Repeatedly removes the lowest weight LCB from the LCB list until all
 	 * remaining LCBs meet the minimum weight criteria. Call filterLCBs() after
 	 * calling this function to arrive at a final set of LCBs that meet the
@@ -128,7 +128,7 @@ public class LCBlist {
 
 			// If we are saving change points, save it.
 			if (change_points != null && previousMinWeight != currentMinWeight) {
-				change_points.addElement (new Integer ((int) currentMinWeight));
+				change_points.addElement (Integer.valueOf ((int) currentMinWeight));
 			}
 
 			// if only a single LCB remains, don't remove it
@@ -290,7 +290,7 @@ public class LCBlist {
 		}
 
 		if (change_points != null) {
-			change_points.addElement (new Integer ((int) currentMinWeight));
+			change_points.addElement (Integer.valueOf ((int) currentMinWeight));
 		}
 
 	}
@@ -326,10 +326,10 @@ public class LCBlist {
 			if (currentID != ENDPOINT && currentID != REMOVED
 					&& interimList[currentID].id != currentID) {
 				Stack visited = new Stack ();
-				visited.push (new Integer (lcbIndex));
+				visited.push (Integer.valueOf (lcbIndex));
 				while (currentID != ENDPOINT && currentID != REMOVED
 						&& interimList[currentID].id != currentID) {
-					visited.push (new Integer (currentID));
+					visited.push (Integer.valueOf (currentID));
 					currentID = interimList[currentID].id;
 				}
 

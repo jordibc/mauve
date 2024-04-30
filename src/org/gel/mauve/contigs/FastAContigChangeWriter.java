@@ -26,7 +26,7 @@ import org.gel.mauve.MauveConstants;
 import org.gel.mauve.MauveHelperFunctions;
 
 public class FastAContigChangeWriter implements MauveConstants {
-	
+
 	protected Genome genome;
 	protected Hashtable inverters;
 	protected Sequence seq;
@@ -39,7 +39,7 @@ public class FastAContigChangeWriter implements MauveConstants {
 	protected FastaFormat format;
 	protected StreamWriter writer;
 	protected StreamWriter writer2;
-	
+
 	public FastAContigChangeWriter (ContigReorderer central) {
 		genome = central.fix;
 		inverters = central.inverters;
@@ -79,7 +79,7 @@ public class FastAContigChangeWriter implements MauveConstants {
 			Collections.sort (list);
 			for (int i = 0; i < list.size(); i++)
 				ordered.add(genome.getChromosomeAt(((ComponentFeature)
-						all_contigs.get(list.get(i))).getLocation().getMin())); 
+						all_contigs.get(list.get(i))).getLocation().getMin()));
 			writeContigs (list.iterator (), true, print_extra);
 			System.out.println ("done with unordered. " + all_contigs.size());
 		} catch (Exception e) {
@@ -92,14 +92,14 @@ public class FastAContigChangeWriter implements MauveConstants {
 			out2.close ();
 		}
 	}
-	
+
 	public void writeContigs (Iterator itty, boolean key) {
 		writeContigs (itty, key, false);
 	}
 	public void writeContigs (Iterator itty, boolean key, boolean print_extra) {
 		if (!itty.hasNext())
 			return;
-		Long start = new Long (-1);
+		Long start = Long.valueOf (-1);
 		Object obj = null;
 		ListSequenceIterator list = new ListSequenceIterator ();
 		ListSequenceIterator list2 = new ListSequenceIterator ();
@@ -114,7 +114,7 @@ public class FastAContigChangeWriter implements MauveConstants {
 				if (obj == null)
 					break;
 				if (obj instanceof Chromosome)
-					start = new Long (((Chromosome) obj).getStart ());
+					start = Long.valueOf (((Chromosome) obj).getStart ());
 				else
 					start = (Long) obj;
 				//System.out.println ("start: " + start);
@@ -152,12 +152,12 @@ public class FastAContigChangeWriter implements MauveConstants {
 
 /*System.out.println ("a: " + feat.getComponentSequence ().seqString ());
 System.out.println ("b: " + two.seqString ());
-ComponentFeature.Template template = (ComponentFeature.Template) 
+ComponentFeature.Template template = (ComponentFeature.Template)
 feat.makeTemplate ();
 template.componentSequence = two;
 seq.removeFeature (feat);
 seq.createFeature (template);*/
-	
+
 	public static Hashtable getContigFeatures (Genome genome) {
 		Sequence seq = genome.getAnnotationSequence();
 		Iterator itty = seq.features();
@@ -166,7 +166,7 @@ seq.createFeature (template);*/
 			Object obj = itty.next ();
 			if (obj instanceof ComponentFeature) {
 				ComponentFeature feat = (ComponentFeature) obj;
-				all_contigs.put(new Long (feat.getLocation().getMin()), feat);
+				all_contigs.put(Long.valueOf (feat.getLocation().getMin()), feat);
 			}
 		}
 		return all_contigs;

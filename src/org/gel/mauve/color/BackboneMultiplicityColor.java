@@ -29,7 +29,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
     public static final float BRIGHT_MIN = .5f;
     public static final float BRIGHT_MAX = 1.0f;
     public static final float BRIGHT_LEVELS = 3;
-    
+
     /**
      *  Returns an array of visually distinct colors
      * @param ncols	The requested number of colors.  Fewer colors may be returned than were requested.
@@ -46,7 +46,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
     	// problem as choosing maximally distant points in a 3d rectangle.
     	// compute the total volume of the target space and divide
     	// by the number of desired colors
-    	
+
     	float max_cols = HUE_LEVELS * SAT_LEVELS * BRIGHT_LEVELS;
     	max_cols = ncols < max_cols ? ncols : max_cols;
     	Color[] cols = new Color[(int)max_cols];
@@ -61,7 +61,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
     	{
     		h_steps++;
     	}
-    	
+
     	float s_step = (SAT_MAX-SAT_MIN) / (float)s_steps;
     	float b_step = (BRIGHT_MAX-BRIGHT_MIN) / (float)b_steps;
     	float h_step = (HUE_MAX-HUE_MIN) / (float)h_steps;
@@ -72,17 +72,17 @@ public class BackboneMultiplicityColor implements ColorScheme {
         		for(int hI = 0; hI < h_steps; hI++)
         		{
         			cols[cI++] = Color.getHSBColor(
-        					h, 
-        					(s_step * (float)sI) + SAT_MIN, 
+        					h,
+        					(s_step * (float)sI) + SAT_MIN,
         					(b_step * (float)bI) + BRIGHT_MIN);
         			h += h_step;
         			if(cI == cols.length)
         				return cols;
         		}
-    	
+
     	return cols;
     }
-    
+
     private final static Comparator BB_MULTIPLICITY_TYPE_COMPARATOR = new Comparator()
     {
         public int compare(Object o1, Object o2)
@@ -101,7 +101,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
         	return 0;
         }
     };
-    
+
     /**
      * Converts an array of booleans to a BitSet
      * @param b	an array of booleans
@@ -130,7 +130,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
         Backbone[] bb_by_mt = new Backbone[all_bb_array.length];
         System.arraycopy(all_bb_array,0,bb_by_mt,0,bb_by_mt.length);
 
-        
+
         Arrays.sort(bb_by_mt, BB_MULTIPLICITY_TYPE_COMPARATOR);
         long unique_mt_count = 1;
         for( int bbI = 1; bbI < bb_by_mt.length; ++bbI )
@@ -138,7 +138,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
         	if(BB_MULTIPLICITY_TYPE_COMPARATOR.compare(bb_by_mt[bbI-1],bb_by_mt[bbI]) != 0)
         		unique_mt_count++;
         }
-        
+
         // count up nucleotides covered by each multiplicity type
         long[] nt = new long[(int)unique_mt_count];
         Object[] types = new Object[(int)unique_mt_count];
@@ -153,17 +153,17 @@ public class BackboneMultiplicityColor implements ColorScheme {
         	nt[cur_mt] += bb_by_mt[bbI].getLength();
         }
 		types[cur_mt] = bb_by_mt[bb_by_mt.length-1].getSeqs();
-        
+
         // put the nucleotide counts for each SPA pattern in a map
         TreeMap sm = new java.util.TreeMap();
         for( int i = 0; i < nt.length; i++ )
         {
-        	java.util.Vector l = (java.util.Vector)sm.get(new Long(nt[i]));
+        	java.util.Vector l = (java.util.Vector)sm.get(Long.valueOf(nt[i]));
             if (l == null)
-                sm.put(new Long(nt[i]), l=new java.util.Vector());
+                sm.put(Long.valueOf(nt[i]), l=new java.util.Vector());
             l.add(types[i]);
         }
-        
+
         // get the N most distinct colors and assign them round-robin to
         // SPA patterns in order of nt count
         Color[] cols = BackboneMultiplicityColor.getColors((int)unique_mt_count);
@@ -182,7 +182,7 @@ public class BackboneMultiplicityColor implements ColorScheme {
         			colI = 0;
         	}
         }
-        
+
         // set N-way backbone to mauve!!  :)
         java.util.BitSet nway = new java.util.BitSet(xmfa.getSequenceCount());
         nway.set(0, xmfa.getSequenceCount());

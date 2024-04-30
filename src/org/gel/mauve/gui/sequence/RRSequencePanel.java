@@ -31,11 +31,11 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
     {
         setLayout(new FillLayout());
         matchPanel = new MatchPanel(rrpanel, model, genome);
-        add(matchPanel, new Integer(1));
+        add(matchPanel, Integer.valueOf(1));
         highlightPanel = new HighlightPanel(model, genome);
-        add(highlightPanel, new Integer(2));
+        add(highlightPanel, Integer.valueOf(2));
         rangeHighlightPanel = new RangeHighlightPanel(model, genome);
-        add(rangeHighlightPanel, new Integer(3));
+        add(rangeHighlightPanel, Integer.valueOf(3));
         setMinimumSize( new Dimension( 10000, 100 ) );
         setMaximumSize( new Dimension( 10000, 175 ) );
         addMouseListener(matchPanel);
@@ -44,45 +44,45 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
         addMouseMotionListener(rangeHighlightPanel);
         model.addModelListener(this);
     }
-    
+
     public MatchPanel getMatchPanel(){ return matchPanel; }
-    
+
     /**
      * goTo - scrolls viewer to particular coordinate of genome
-     * 
+     *
      * @param position The position in the sequence to view
      */
     public int goTo (long position) {
     	return matchPanel.goTo (position);
     }
-    
+
     /**
      * isForGenome returns true if this RRSequencePanel is associated
      * with the specified genome, and false otherwise
-     * 
+     *
      * @param genome - the genome in question
      */
     public boolean isForGenome (Genome genome) {
     	return matchPanel.isForGenome (genome);
     }
-    
+
     public void setBackground(Color bg)
     {
     	super.setBackground(bg);
     	if(matchPanel != null)
     		matchPanel.setBackground(bg);
     }
-    
+
     public int boxHeight()
     {
         return matchPanel.boxHeight();
     }
-    
+
     public int boxTop()
     {
         return matchPanel.boxTop();
     }
-    
+
     public int sequenceCoordinateToCenterPixel(long coord)
     {
         return matchPanel.sequenceCoordinateToCenterPixel(coord);
@@ -97,7 +97,7 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
     {
         // Ignored.
     }
-    
+
     public void referenceChanged(ModelEvent event)
     {
         // Ignored.
@@ -111,7 +111,7 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
     public void modeChanged(ModelEvent event)
     {
         BaseViewerModel model = (BaseViewerModel) event.getSource();
-        
+
         if (model.getMode() == ViewerMode.NORMAL)
         {
             addMouseListener(matchPanel);
@@ -147,7 +147,7 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
     {
         // Ignored.
     }
-    
+
     public void modelReloadEnd(ModelEvent event)
     {
         // Ignored
@@ -171,7 +171,7 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
         // Ignored.
     }
 
-    public void attributesChanged(ModelEvent event) 
+    public void attributesChanged(ModelEvent event)
     {
         // find other panels for the data
     	BaseViewerModel model = (BaseViewerModel)(event.getSource());
@@ -184,10 +184,9 @@ public class RRSequencePanel extends JLayeredPane implements ModelListener
     			if(histograms.contains(o))
     				continue;
     			HistogramPanel hp = new HistogramPanel(model, matchPanel.getGenome(), (ZoomHistogram)o);
-    			add(hp,new Integer(4));
+    			add(hp, Integer.valueOf(4));
     			histograms.add((ZoomHistogram)o);
     		}
     	}
     }
-} 
-
+}

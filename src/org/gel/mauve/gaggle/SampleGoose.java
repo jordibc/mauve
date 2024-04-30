@@ -1,7 +1,7 @@
 package org.gel.mauve.gaggle;
 // SampleGoose.java
 //------------------------------------------------------------------------------
-// $Revision: 503 $   
+// $Revision: 503 $
 // $Date: 2005/04/03 19:15:04 $
 //-------------------------------------------------------------------------------------
 /*
@@ -37,7 +37,7 @@ import java.net.MalformedURLException;
 
 /**
  * A goose useful for testing and diagnostics and learning how to write a goose
- * that uses the new (2007-04) API. 
+ * that uses the new (2007-04) API.
  */
 public class SampleGoose extends JFrame implements Goose, GaggleConnectionListener,
         WindowListener {
@@ -338,7 +338,7 @@ public class SampleGoose extends JFrame implements Goose, GaggleConnectionListen
 
         int datalength = (gaggleTuple.getData().getSingleList().size() > 5) ? 5
                 : gaggleTuple.getData().getSingleList().size();
-        
+
         int metadatalength = (gaggleTuple.getMetadata().getSingleList().size() > 5) ? 5
                 : gaggleTuple.getMetadata().getSingleList().size();
 
@@ -376,7 +376,7 @@ public class SampleGoose extends JFrame implements Goose, GaggleConnectionListen
                 sb.append(dsegs[i]);
                 sb.append("\n");
             }
-            
+
         }
         */
 
@@ -526,16 +526,16 @@ public class SampleGoose extends JFrame implements Goose, GaggleConnectionListen
             network.addNodeAttribute(nodeNames[i], "species", species);
         }
 
-        network.addEdgeAttribute("YFL036W (GeneCluster) YFL037W", "score", new Double(0.5));
-        network.addEdgeAttribute("YFL037W (GeneFusion) YLR212C", "score", new Double(0.4));
-        network.addEdgeAttribute("YFL037W (GeneFusion) YML085C", "score", new Double(0.3));
-        network.addEdgeAttribute("YFL037W (GeneFusion) YML124C", "score", new Double(0.2));
-        network.addEdgeAttribute("YLR212C (GeneCluster) YLR213C", "score", new Double(0.1));
-        network.addEdgeAttribute("YLR212C (GeneFusion) YML085C", "score", new Double(0.8));
-        network.addEdgeAttribute("YLR212C (GeneFusion) YML124C", "score", new Double(0.75));
-        network.addEdgeAttribute("YML123C (GeneCluster) YML124C", "score", new Double(0.55));
-        network.addEdgeAttribute("YML085C (GeneCluster) YML086C", "score", new Double(0.45));
-        network.addEdgeAttribute("YML085C (GeneFusion) YML124C", "score", new Double(0.35));
+        network.addEdgeAttribute("YFL036W (GeneCluster) YFL037W", "score", Double.valueOf(0.5));
+        network.addEdgeAttribute("YFL037W (GeneFusion) YLR212C", "score", Double.valueOf(0.4));
+        network.addEdgeAttribute("YFL037W (GeneFusion) YML085C", "score", Double.valueOf(0.3));
+        network.addEdgeAttribute("YFL037W (GeneFusion) YML124C", "score", Double.valueOf(0.2));
+        network.addEdgeAttribute("YLR212C (GeneCluster) YLR213C", "score", Double.valueOf(0.1));
+        network.addEdgeAttribute("YLR212C (GeneFusion) YML085C", "score", Double.valueOf(0.8));
+        network.addEdgeAttribute("YLR212C (GeneFusion) YML124C", "score", Double.valueOf(0.75));
+        network.addEdgeAttribute("YML123C (GeneCluster) YML124C", "score", Double.valueOf(0.55));
+        network.addEdgeAttribute("YML085C (GeneCluster) YML086C", "score", Double.valueOf(0.45));
+        network.addEdgeAttribute("YML085C (GeneFusion) YML124C", "score", Double.valueOf(0.35));
         network.setSpecies(species);
         network.setName("a sample network");
 
