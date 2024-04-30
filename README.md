@@ -75,31 +75,35 @@ to `<output filename>.alignment`.
 
 ## Basic keyboard interface commands
 
-* up arrow - Zoom in
-* down arrow - Zoom out
-* Ctrl+left arrow - Shift left
-* Ctrl+right arrow - Shift right
-* Ctrl+Shift+left arrow - Big shift left
-* Ctrl+Shift+right arrow - Big shift right
+* `up arrow` - Zoom in
+* `down arrow` - Zoom out
+* `Ctrl + left arrow` - Shift left
+* `Ctrl + right arrow` - Shift right
+* `Ctrl + Shift + left arrow` - Big shift left
+* `Ctrl + Shift + right arrow` - Big shift right
 
-* o - Generalized offset color scheme
-* i - Normalized generalized offset color scheme
-* u - Multiplicity type color scheme
-* y - Normalized multiplicity type color scheme
-* p - Multiplicity color scheme
-* l - LCB color scheme
 
-* Shift+L - Toggle LCB homology tracking lines
+* `o` - Generalized offset color scheme
+* `i` - Normalized generalized offset color scheme
+* `u` - Multiplicity type color scheme
+* `y` - Normalized multiplicity type color scheme
+* `p` - Multiplicity color scheme
+* `l` - LCB color scheme
 
-* Shift+S - Lock scales to the longest range of sequence currently in view.
 
-* Ctrl+P - print
+* `Shift + L` - Toggle LCB homology tracking lines
+
+
+* `Shift + S` - Lock scales to the longest range of sequence currently in view.
+
+
+* `Ctrl + P` - print
 
 
 ## Mouse interface
 
 Click on a matching region to highlight the corresponding matches in
-other sequences Right-click on a matching region for a pop-up menu to
+other sequences right-click on a matching region for a pop-up menu to
 center the display on that match.
 
 
@@ -119,7 +123,7 @@ execute Mauve.
 
 ## Bugs
 
-Yes there are bugs. Do *not* send reports anymore to
+Yes there are bugs. Do **not** send reports anymore to
 `aaron.darling(at)uts.edu.au` since the software is no longer
-maintained. But if you open an issue in the repository, we together
-may figure out a solution.
+maintained. But if you open an issue in this repository, we may figure
+out a solution together.
